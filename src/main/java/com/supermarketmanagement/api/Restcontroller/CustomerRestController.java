@@ -1,0 +1,53 @@
+package com.supermarketmanagement.api.Restcontroller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
+
+import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
+import com.supermarketmanagement.api.Model.Custom.Customer.CustomerMessageDto;
+import com.supermarketmanagement.api.Model.Entity.CustomerModel;
+import com.supermarketmanagement.api.Service.CustomerService;
+
+import retrofit2.http.Path;
+
+@RestController
+@RequestMapping(value = "/customers")
+public class CustomerRestController {
+	
+	@Autowired
+	private CustomerService customerService;
+
+	
+	@GetMapping("/list")
+	public ResponseEntity<List<CustomerListDto>>  getAllCustomerDetails(){
+		return new ResponseEntity<List<CustomerListDto>>(customerService.getAllCustomerDetails(),HttpStatus.OK);
+	}
+	
+	@PostMapping("/addorUpdate")
+	public ResponseEntity<String> addCustomerDetails(@RequestBody CustomerListDto customerListDto){
+		boolean isNew = customerListDto.getCustomerId()==null;
+		customerService.addCustomerDetails(customerListDto);
+		if(isNew) {
+			return ResponseEntity.ok(CustomerMessageDto.CUSTOMER_ADDED);
+		}
+		else {
+			return ResponseEntity.ok(CustomerMessageDto.CUSTOMER_UPDATED);
+		}
+	}
+	
+	@PostMapping("/delete/id/{id}")
+	public ResponseEntity<String> deleteCustomerById(@PathVariable Long id){
+		customerService.deleteCustomerById(id);
+		return ResponseEntity.ok(CustomerMessageDto.CUSTOMER_DELETED);
+	}
+	
+
+}
