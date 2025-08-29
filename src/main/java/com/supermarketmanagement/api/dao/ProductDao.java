@@ -2,6 +2,7 @@ package com.supermarketmanagement.api.dao;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
 import com.supermarketmanagement.api.Model.Custom.Product.ActiveProductsListDto;
@@ -13,18 +14,14 @@ public interface ProductDao {
 
 	List<ProductListDto> getAllProductDetails();
 
-	ProductModel updateProduct(ProductModel updatedProduct);
-
 	ProductModel getProductDetailsById(int id);
 
 	List<ActiveProductsListDto> getActiveProductDetails(LocalDate date);
 
 	List<ActiveProductsListDto> getInActiveProductDetails(LocalDate date);
 
-	ProductModel addProductDetails(ProductModel productModel);
+	Object addProductDetails(ProductModel productModel);
 
-	Object deleteProductById(Long id);
-
-	List<ProductPriceHistoryDto> getProductPriceHistoryById(Long id);
+	Optional<ProductModel> findByProductId(Long productId);
 
 }

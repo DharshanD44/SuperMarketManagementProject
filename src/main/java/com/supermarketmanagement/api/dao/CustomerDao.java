@@ -7,8 +7,6 @@ import com.supermarketmanagement.api.Model.Entity.CustomerModel;
 public interface CustomerDao {
 
 	List<CustomerListDto> getCustomerListDtos();
-
-	CustomerModel addCustomerDetails(CustomerListDto customerListDto);
-
-	CustomerModel deleteCustomerById(Long id);
+	
+	CustomerModel findByCustomerId(Long customerId);
 }

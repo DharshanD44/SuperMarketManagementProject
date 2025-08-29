@@ -14,7 +14,7 @@ public interface ProductService {
 
 	List<ProductListDto> getAllProductDetails();
 
-	ProductModel updateProduct(ProductModel updatedProduct);
+	Object updateProduct(ProductModel updatedProduct);
 
 	ProductModel getProductDetailsById(int id);
 
@@ -22,7 +22,7 @@ public interface ProductService {
 
 	List<ActiveProductsListDto> getInActiveProductDetails(LocalDate date);
 
-	ProductModel addProductDetails(ProductModel productModel);
+	Object addProductDetails(ProductModel productModel);
 
 	Object deleteProductById(Long id);
 

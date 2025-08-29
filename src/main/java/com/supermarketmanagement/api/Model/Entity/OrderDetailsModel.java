@@ -36,7 +36,15 @@ public class OrderDetailsModel {
     @JoinColumn(name = "customer_id", nullable = false)  
     private CustomerModel customer;
 
-    @Column(name = "order_expected_date")
+    public float getTotalprice() {
+		return totalprice;
+	}
+
+	public void setTotalprice(float totalprice) {
+		this.totalprice = totalprice;
+	}
+
+	@Column(name = "order_expected_date")
     private LocalDate orderExpectedDate;
 
     @Enumerated(EnumType.STRING)
@@ -49,6 +57,8 @@ public class OrderDetailsModel {
     @Column(name = "update_date")
     private LocalDate updateDate;
     
+    @Column(name = "total_price")
+    private float totalprice;
     
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderLineItemDetailsModel> lineItemDetailsModels = new ArrayList<>();
@@ -132,9 +142,8 @@ public class OrderDetailsModel {
 		this.lineItemDetailsModels = lineItemDetailsModels;
 	}
 
-
 	public OrderDetailsModel(LocalDate orderDate, CustomerModel customer, LocalDate orderExpectedDate,
-			OrderStatusDto orderStatus, LocalDate createdDate, LocalDate updateDate,
+			OrderStatusDto orderStatus, LocalDate createdDate, LocalDate updateDate, float totalprice,
 			List<OrderLineItemDetailsModel> lineItemDetailsModels) {
 		super();
 		this.orderDate = orderDate;
@@ -143,9 +152,9 @@ public class OrderDetailsModel {
 		this.orderStatus = orderStatus;
 		this.createdDate = createdDate;
 		this.updateDate = updateDate;
+		this.totalprice = totalprice;
 		this.lineItemDetailsModels = lineItemDetailsModels;
 	}
-
 
 	public OrderDetailsModel() {
 		

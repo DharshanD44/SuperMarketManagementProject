@@ -36,10 +36,9 @@ public class ProductRestController {
 	}
 	
 	@PutMapping("/update")
-    public ResponseEntity<ProductModel> updateProduct(@RequestBody ProductModel updatedProduct) {
-        ProductModel savedProduct = productService.updateProduct(updatedProduct);
-
-        return ResponseEntity.ok(savedProduct);
+    public ResponseEntity<?> updateProduct(@RequestBody ProductModel updatedProduct) {
+		productService.updateProduct(updatedProduct);
+        return ResponseEntity.ok(ProductMessageDto.PRODUCT_UPDATED);
     }
 	
 	@GetMapping("/view/id/{id}")
@@ -61,7 +60,8 @@ public class ProductRestController {
 	
 	@PostMapping("/add")
 	public ResponseEntity<?> addSingleProduct(@RequestBody ProductModel productModel){
-		return new ResponseEntity<ProductModel>(productService.addProductDetails(productModel),HttpStatus.OK);
+		productService.addProductDetails(productModel);
+		return ResponseEntity.ok(ProductMessageDto.NEW_PRODUCT_ADDED);
 	}
 	
 	@PostMapping("/delete/id/{id}")

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import com.amazonaws.services.apigateway.model.Op;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
+import com.supermarketmanagement.api.Model.Custom.Customer.CustomerMessageDto;
 import com.supermarketmanagement.api.Model.Entity.CustomerModel;
 import com.supermarketmanagement.api.Repository.CustomerRepoistory;
 import com.supermarketmanagement.api.dao.CustomerDao;
@@ -53,43 +54,13 @@ public class CustomerDaoImp implements CustomerDao{
 		return entityManager.createQuery(criteriaQuery).getResultList();
 	}
 
-	@Override
-	public CustomerModel addCustomerDetails(CustomerListDto customerListDto) {
-				
-		CustomerModel entity;
-		
-		if(customerListDto.getCustomerId() == null)
-		{
-			entity = new CustomerModel();
-			entity.setCustomerCreatedDate(LocalDate.now());
-		}
-		else
-		{
-			entity = customerRepoistory.findById(customerListDto.getCustomerId()).orElseThrow(
-					()->
-						new RuntimeException("Customer with Id "+customerListDto.getCustomerId()+" not found")
-					);
-		}
-		entity.setCustomerName(customerListDto.getCustomerName());
-		entity.setCustomerMobileno(customerListDto.getCustomerMobileno());
-		entity.setCustomerAddress(customerListDto.getCustomerAddress());
-		entity.setCustomerLocation(customerListDto.getCustomerLocation());
-		entity.setCustomerCity(customerListDto.getCustomerCity());
-		entity.setCustomerPincode(customerListDto.getCustomerPincode());
-		entity.setCustomerEmail(customerListDto.getCustomerEmail());
-		
-		return customerRepoistory.save(entity);
-
-	}
 
 	@Override
-	public CustomerModel deleteCustomerById(Long id) {
-		CustomerModel customerModel = customerRepoistory.findById(id).orElseThrow(
-				()->new RuntimeException("Customer with id "+id+" not found!")
+	public CustomerModel findByCustomerId(Long customerId) {
+		
+		return customerRepoistory.findById(customerId).orElseThrow(
+				()-> new RuntimeException(CustomerMessageDto.CUSTOMER_NOT_FOUND +" "+customerId)
 				);
-		customerModel.setCustomerLastEffectiveDate(LocalDate.now());
-	
-		return customerRepoistory.save(customerModel);
 	}
 	
 	

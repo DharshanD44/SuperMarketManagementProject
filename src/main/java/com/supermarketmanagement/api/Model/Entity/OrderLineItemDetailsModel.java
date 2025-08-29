@@ -48,12 +48,31 @@ public class OrderLineItemDetailsModel {
 
     @Column(name = "update_date")
     private LocalDate updateDate;
+    
+    @Column(name = "individual_price")
+    private float price;
 
-     public OrderLineItemDetailsModel() {
+    public OrderLineItemDetailsModel() {
 	
-     }
+    }
 
-    public Long getOrderLineId() {
+    public OrderStatusDto getStatusDto() {
+		return statusDto;
+	}
+
+	public void setStatusDto(OrderStatusDto statusDto) {
+		this.statusDto = statusDto;
+	}
+
+	public float getPrice() {
+		return price;
+	}
+
+	public void setPrice(float price) {
+		this.price = price;
+	}
+
+	public Long getOrderLineId() {
         return orderLineId;
     }
 
@@ -118,7 +137,9 @@ public class OrderLineItemDetailsModel {
     }
 
 	public OrderLineItemDetailsModel(OrderDetailsModel order, ProductModel product, Integer orderQuantityIndividualUnit,
-			Integer orderQuantityInPackage, OrderStatusDto statusDto, LocalDate createdDate, LocalDate updateDate) {
+			Integer orderQuantityInPackage, OrderStatusDto statusDto, LocalDate createdDate, LocalDate updateDate,
+			float price) {
+		super();
 		this.order = order;
 		this.product = product;
 		this.orderQuantityIndividualUnit = orderQuantityIndividualUnit;
@@ -126,7 +147,10 @@ public class OrderLineItemDetailsModel {
 		this.statusDto = statusDto;
 		this.createdDate = createdDate;
 		this.updateDate = updateDate;
+		this.price = price;
 	}
+
+	
     
 }
 

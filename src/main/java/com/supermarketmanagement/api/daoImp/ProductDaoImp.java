@@ -52,55 +52,7 @@ public class ProductDaoImp implements ProductDao {
 				.where(cb.isFalse(root.get("isDeleted")));
 		return entityManager.createQuery(criteriaQuery).getResultList();
 	}
-
-	@Override
-	public ProductModel updateProduct(ProductModel updatedProduct) {
-
-		Optional<ProductModel> optionalProduct = productRepository.findById(updatedProduct.getProductId());
-		ProductModel existingProduct = optionalProduct.get();
-
-		if (optionalProduct.isEmpty()) {
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not Found!");
-		}
-
-		else {
-
-			if (existingProduct.getProductEffectiveDate().isAfter(LocalDate.now())) {
-				if (updatedProduct.getProductEffectiveDate() != null)
-					existingProduct.setProductEffectiveDate(updatedProduct.getProductEffectiveDate());
-
-				existingProduct.setProductName(updatedProduct.getProductName());
-				existingProduct.setProductPackageType(updatedProduct.getProductPackageType());
-				existingProduct.setProductPackQuantity(updatedProduct.getProductPackQuantity());
-				existingProduct.setProductPackageUnitOfMeasure(updatedProduct.getProductPackageUnitOfMeasure());
-				existingProduct.setProductPrice(updatedProduct.getProductPrice());
-				existingProduct.setProductCreatedDate(LocalDate.now());
-				existingProduct.setProductCurrentStockPackageCount(updatedProduct.getProductCurrentStockPackageCount());
-				existingProduct.setProductUpdatedtedDate(LocalDate.now());
-
-				return productRepository.save(existingProduct);
-			} else {
-				existingProduct.setProductLastEffectiveDate(updatedProduct.getProductLastEffectiveDate());
-				productRepository.save(existingProduct);
-
-				ProductModel newProduct = new ProductModel();
-				newProduct.setProductName(updatedProduct.getProductName());
-				newProduct.setProductPackageType(updatedProduct.getProductPackageType());
-				newProduct.setProductPackQuantity(updatedProduct.getProductPackQuantity());
-				newProduct.setProductPackageUnitOfMeasure(updatedProduct.getProductPackageUnitOfMeasure());
-				newProduct.setProductPrice(updatedProduct.getProductPrice());
-				newProduct.setProductCurrentStockPackageCount(updatedProduct.getProductCurrentStockPackageCount());
-				newProduct.setProductEffectiveDate(updatedProduct.getProductEffectiveDate());
-				newProduct.setOldProductId(existingProduct.getProductId());
-				newProduct.setProductCreatedDate(LocalDate.now());
-				newProduct.setProductUpdatedtedDate(LocalDate.now());
-
-				return productRepository.save(newProduct);
-			}
-
-		}
-
-	}
+	
 
 	@Override
 	public ProductModel getProductDetailsById(int id) {
@@ -158,43 +110,15 @@ public class ProductDaoImp implements ProductDao {
 	}
 
 	@Override
-	public ProductModel addProductDetails(ProductModel productModel) {
+	public Object addProductDetails(ProductModel productModel) {
 
 		return productRepository.save(productModel);
 	}
 
-	@Override
-	public Object deleteProductById(Long id) {
-
-		ProductModel model = productRepository.findById(id)
-				.orElseThrow(() -> new RuntimeException(ProductMessageDto.PRODUCT_ID_NOT_FOUND));
-		model.setIsDeleted(true);
-		return productRepository.save(model);
-	}
 
 	@Override
-	public List<ProductPriceHistoryDto> getProductPriceHistoryById(Long activeid) {
-
-		List<ProductPriceHistoryDto> result = new ArrayList<>(); 
-		Long currentId = activeid;
-
-		while(currentId!=null) {
-			ProductModel model = productRepository.findById(currentId).orElseThrow(
-					()-> new RuntimeException(ProductMessageDto.PRODUCT_ID_NOT_FOUND +activeid)
-					);
-			result.add(
-					new ProductPriceHistoryDto(
-							model.getProductId(),
-							model.getProductName(),
-							model.getProductPrice(),
-							model.getProductEffectiveDate()
-							));
-			currentId = model.getOldProductId(); 
-		}
-		
-//		result.sort(Comparator.comparing(ProductPriceHistoryDto :: getProductEffectiveDate));
-		
-		return result;
+	public Optional<ProductModel> findByProductId(Long productId) {
+		return productRepository.findById(productId);
 	}
 
 }

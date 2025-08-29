@@ -49,7 +49,6 @@ public class ProductModel {
     @Column(name = "is_deleted")
     private Boolean isDeleted = false;
 
-    // Getters and Setters
 
     public Long getProductId() {
         return productId;

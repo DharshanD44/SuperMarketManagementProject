@@ -26,6 +26,7 @@ import com.supermarketmanagement.api.Repository.OrderLineItemDetailsRepoistory;
 import com.supermarketmanagement.api.Repository.ProductRepository;
 import com.supermarketmanagement.api.dao.OrderDetailsDao;
 
+import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.transaction.Transactional;
 
 @Repository
@@ -49,6 +50,7 @@ public class OrderDetailsDaoImp implements OrderDetailsDao {
 		CustomerModel customerModel = customerRepoistory.findById(requestDto.getCustomerId())
 				.orElseThrow(() -> new RuntimeException(CustomerMessageDto.CUSTOMER_NOT_FOUND));
 
+		float totalPrice=0;
 		OrderDetailsModel orderDetailsDao = new OrderDetailsModel();
 		orderDetailsDao.setCustomer(customerModel);
 		orderDetailsDao.setOrderExpectedDate(LocalDate.now().plusDays(2));
@@ -56,6 +58,8 @@ public class OrderDetailsDaoImp implements OrderDetailsDao {
 		orderDetailsDao.setCreatedDate(LocalDate.now());
 
 		for (OrderLineItemsDto itemsDto : requestDto.getItems()) {
+			
+			float individualPrice =0;
 
 			ProductModel productModel = productRepository.findById(itemsDto.getProductId())
 					.orElseThrow(() -> new RuntimeException(ProductMessageDto.PRODUCT_ID_NOT_FOUND));
@@ -67,11 +71,16 @@ public class OrderDetailsDaoImp implements OrderDetailsDao {
 			Integer requiredPackage = (int) Math.ceil((double) requestUnits / packageSize);
 
 			Integer adjustedUnits = requiredPackage * packageSize;
-
+			
+			individualPrice = (float) (requiredPackage * productModel.getProductPrice());
+			
+			totalPrice +=individualPrice;
+			
 			if (requiredPackage <= productModel.getProductCurrentStockPackageCount()) {
 				OrderLineItemDetailsModel itemDetailsModel1 = new OrderLineItemDetailsModel();
 				itemDetailsModel1.setProduct(productModel);
 				itemDetailsModel1.setOrder(orderDetailsDao);
+				itemDetailsModel1.setPrice(individualPrice);
 				itemDetailsModel1.setCreatedDate(LocalDate.now());
 				itemDetailsModel1.setOrderQuantityInPackage(requiredPackage);
 				itemDetailsModel1.setOrderQuantityIndividualUnit(adjustedUnits);
@@ -83,6 +92,7 @@ public class OrderDetailsDaoImp implements OrderDetailsDao {
 				return OrderMessageDto.ORDER_QUANTITY_OUT_OF_STOCK + productModel.getProductName();
 			}
 		}
+		orderDetailsDao.setTotalprice(totalPrice);
 		return orderdetailsRepoistory.save(orderDetailsDao);
 	}
 
