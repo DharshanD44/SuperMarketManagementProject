@@ -1,6 +1,7 @@
 package com.supermarketmanagement.api.ServiceImp;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -46,7 +47,7 @@ public class ProductServiceImp implements ProductService{
 
 		else {
 
-			if (existingProduct.getProductEffectiveDate().isAfter(LocalDate.now())) 
+			if (existingProduct.getProductEffectiveDate().isAfter(LocalDateTime.now())) 
 			{
 				if (updatedProduct.getProductEffectiveDate() != null)
 					existingProduct.setProductEffectiveDate(updatedProduct.getProductEffectiveDate());
@@ -56,14 +57,14 @@ public class ProductServiceImp implements ProductService{
 				existingProduct.setProductPackQuantity(updatedProduct.getProductPackQuantity());
 				existingProduct.setProductPackageUnitOfMeasure(updatedProduct.getProductPackageUnitOfMeasure());
 				existingProduct.setProductPrice(updatedProduct.getProductPrice());
-				existingProduct.setProductCreatedDate(LocalDate.now());
+				existingProduct.setProductCreatedDate(LocalDateTime.now());
 				existingProduct.setProductCurrentStockPackageCount(updatedProduct.getProductCurrentStockPackageCount());
-				existingProduct.setProductUpdatedtedDate(LocalDate.now());
+				existingProduct.setProductUpdatedtedDate(LocalDateTime.now());
 
 				return existingProduct;
 			} 
 			else {
-					existingProduct.setProductLastEffectiveDate(LocalDate.now());
+					existingProduct.setProductLastEffectiveDate(LocalDateTime.now());
 
 					ProductModel newProduct = new ProductModel();
 					newProduct.setProductName(updatedProduct.getProductName());
@@ -75,9 +76,10 @@ public class ProductServiceImp implements ProductService{
 					newProduct.setProductEffectiveDate(updatedProduct.getProductEffectiveDate());
 					newProduct.setProductLastEffectiveDate(updatedProduct.getProductLastEffectiveDate());
 					newProduct.setOldProductId(existingProduct.getProductId());
-					newProduct.setProductCreatedDate(LocalDate.now());
-					newProduct.setProductUpdatedtedDate(LocalDate.now());
-					return newProduct;
+					newProduct.setProductCreatedDate(LocalDateTime.now());
+					newProduct.setProductUpdatedtedDate(LocalDateTime.now());
+					productDao.saveProduct(newProduct);
+					return ProductMessageDto.PRODUCT_UPDATED;
 				}
 		}
 		 
@@ -106,7 +108,7 @@ public class ProductServiceImp implements ProductService{
 		
 		ProductModel dto = new ProductModel();
 
-		dto.setProductCreatedDate(LocalDate.now());
+		dto.setProductCreatedDate(LocalDateTime.now());
 		dto.setProductCurrentStockPackageCount(productModel.getProductCurrentStockPackageCount());
 		dto.setProductEffectiveDate(productModel.getProductEffectiveDate());
 		dto.setProductLastEffectiveDate(productModel.getProductLastEffectiveDate());
@@ -116,7 +118,8 @@ public class ProductServiceImp implements ProductService{
 		dto.setProductPackageUnitOfMeasure(productModel.getProductPackageUnitOfMeasure());
 		dto.setProductPrice(productModel.getProductPrice());
 		
-		return productDao.addProductDetails(dto);
+		productDao.addProductDetails(dto);
+		return ProductMessageDto.NEW_PRODUCT_ADDED;
 	}
 
 	@Override
@@ -125,7 +128,7 @@ public class ProductServiceImp implements ProductService{
 		ProductModel model = productDao.findByProductId(id)
 				.orElseThrow(() -> new RuntimeException(ProductMessageDto.PRODUCT_ID_NOT_FOUND));
 		model.setIsDeleted(true);
-		return model;
+		return ProductMessageDto.PRODUCT_DELETED;
 		
 	}
 

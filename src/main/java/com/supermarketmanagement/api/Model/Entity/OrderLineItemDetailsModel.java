@@ -1,6 +1,6 @@
 package com.supermarketmanagement.api.Model.Entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderStatusDto;
 
@@ -44,10 +44,10 @@ public class OrderLineItemDetailsModel {
     private OrderStatusDto statusDto=OrderStatusDto.NEW;
 
     @Column(name = "created_date", updatable = false)
-    private LocalDate createdDate = LocalDate.now();
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(name = "update_date")
-    private LocalDate updateDate;
+    private LocalDateTime updateDate;
     
     @Column(name = "individual_price")
     private float price;
@@ -120,24 +120,24 @@ public class OrderLineItemDetailsModel {
         this.statusDto = orderLineItemStatus;
     }
 
-    public LocalDate getCreatedDate() {
+    public LocalDateTime getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(LocalDate createdDate) {
+    public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
     }
 
-    public LocalDate getUpdateDate() {
+    public LocalDateTime getUpdateDate() {
         return updateDate;
     }
 
-    public void setUpdateDate(LocalDate updateDate) {
+    public void setUpdateDate(LocalDateTime updateDate) {
         this.updateDate = updateDate;
     }
 
 	public OrderLineItemDetailsModel(OrderDetailsModel order, ProductModel product, Integer orderQuantityIndividualUnit,
-			Integer orderQuantityInPackage, OrderStatusDto statusDto, LocalDate createdDate, LocalDate updateDate,
+			Integer orderQuantityInPackage, OrderStatusDto statusDto, LocalDateTime createdDate, LocalDateTime updateDate,
 			float price) {
 		super();
 		this.order = order;
@@ -153,4 +153,3 @@ public class OrderLineItemDetailsModel {
 	
     
 }
-

@@ -37,8 +37,8 @@ public class ProductRestController {
 	
 	@PutMapping("/update")
     public ResponseEntity<?> updateProduct(@RequestBody ProductModel updatedProduct) {
-		productService.updateProduct(updatedProduct);
-        return ResponseEntity.ok(ProductMessageDto.PRODUCT_UPDATED);
+		
+        return ResponseEntity.ok(productService.updateProduct(updatedProduct));
     }
 	
 	@GetMapping("/view/id/{id}")
@@ -60,19 +60,20 @@ public class ProductRestController {
 	
 	@PostMapping("/add")
 	public ResponseEntity<?> addSingleProduct(@RequestBody ProductModel productModel){
-		productService.addProductDetails(productModel);
-		return ResponseEntity.ok(ProductMessageDto.NEW_PRODUCT_ADDED);
+		
+		return ResponseEntity.ok(productService.addProductDetails(productModel));
 	}
 	
 	@PostMapping("/delete/id/{id}")
-	public ResponseEntity<String> deleteProductById(@PathVariable Long id){
-		productService.deleteProductById(id);
-		return ResponseEntity.ok(ProductMessageDto.PRODUCT_DELETED);
+	public ResponseEntity<?> deleteProductById(@PathVariable Long id){
+		
+		return ResponseEntity.ok(productService.deleteProductById(id));
 	}
 	
 	
 	@GetMapping("/pricehistory/id/{id}")
 	public ResponseEntity<List<ProductPriceHistoryDto>> getProductPriceHistoryById(@PathVariable Long id){
+		
 		return new ResponseEntity<List<ProductPriceHistoryDto>>(productService.getProductPriceHistoryById(id),HttpStatus.OK);	
 	}
 	

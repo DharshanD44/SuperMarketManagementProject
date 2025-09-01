@@ -2,12 +2,10 @@ package com.supermarketmanagement.api.daoImp;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.amazonaws.services.apigateway.model.Op;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerMessageDto;
 import com.supermarketmanagement.api.Model.Entity.CustomerModel;
@@ -48,8 +46,9 @@ public class CustomerDaoImp implements CustomerDao{
 			    root.get("customerCity"),
 			    root.get("customerPincode"),
 			    root.get("customerEmail"),
-			    root.get("customerCreatedDate")
-			);
+			    root.get("customerCreatedDate"),
+			    root.get("customerUpdatedDate")
+			).where(root.get("customerLastEffectiveDate").isNull());
 
 		return entityManager.createQuery(criteriaQuery).getResultList();
 	}

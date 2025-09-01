@@ -1,6 +1,12 @@
 package com.supermarketmanagement.api.Model.Custom.Customer;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 public class CustomerListDto {
 
@@ -12,7 +18,20 @@ public class CustomerListDto {
 	private String customerCity;
 	private String customerPincode;
 	private String customerEmail;
-	private LocalDate customerCreatedDate;
+	private LocalDateTime customerCreatedDate;
+	private LocalDateTime customerLastEffectiveDate;
+
+//	@JsonSerialize(using = LocalDateTimeSerializer.class)
+//	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+	private LocalDateTime customerUpdatedDate;
+
+	public LocalDateTime getCustomerUpdatedDate() {
+		return customerUpdatedDate;
+	}
+
+	public void setCustomerUpdatedDate(LocalDateTime customerUpdatedDate) {
+		this.customerUpdatedDate = customerUpdatedDate;
+	}
 
 	public Long getCustomerId() {
 		return customerId;
@@ -78,17 +97,25 @@ public class CustomerListDto {
 		this.customerEmail = customerEmail;
 	}
 
-	public LocalDate getCustomerCreatedDate() {
+	public LocalDateTime getCustomerCreatedDate() {
 		return customerCreatedDate;
 	}
 
-	public void setCustomerCreatedDate(LocalDate customerCreatedDate) {
+	public void setCustomerCreatedDate(LocalDateTime customerCreatedDate) {
 		this.customerCreatedDate = customerCreatedDate;
+	}
+
+	public LocalDateTime getCustomerLastEffectiveDate() {
+		return customerLastEffectiveDate;
+	}
+
+	public void setCustomerLastEffectiveDate(LocalDateTime customerLastEffectiveDate) {
+		this.customerLastEffectiveDate = customerLastEffectiveDate;
 	}
 
 	public CustomerListDto(Long customerId, String customerName, String customerMobileno, String customerAddress,
 			String customerLocation, String customerCity, String customerPincode, String customerEmail,
-			LocalDate customerCreatedDate) {
+			LocalDateTime customerCreatedDate, LocalDateTime customerUpdatedDate) {
 		this.customerId = customerId;
 		this.customerName = customerName;
 		this.customerMobileno = customerMobileno;
@@ -98,6 +125,7 @@ public class CustomerListDto {
 		this.customerPincode = customerPincode;
 		this.customerEmail = customerEmail;
 		this.customerCreatedDate = customerCreatedDate;
+		this.customerUpdatedDate = customerUpdatedDate;
 	}
 
 	public CustomerListDto() {

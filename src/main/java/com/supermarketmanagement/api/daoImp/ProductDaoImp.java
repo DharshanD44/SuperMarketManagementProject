@@ -44,11 +44,19 @@ public class ProductDaoImp implements ProductDao {
 
 		Root<ProductModel> root = criteriaQuery.from(ProductModel.class);
 		criteriaQuery
-				.multiselect(root.get("productId"), root.get("productName"), root.get("productPackageType"),
-						root.get("productPackQuantity"), root.get("productPackageUnitOfMeasure"),
-						root.get("productPrice"), root.get("productCurrentStockPackageCount"),
-						root.get("productEffectiveDate"), root.get("productLastEffectiveDate"),
-						root.get("oldProductId"), root.get("productCreatedDate"), root.get("productUpdatedtedDate"))
+				.multiselect(
+						root.get("productId"), 
+						root.get("productName"), 
+						root.get("productPackageType"),
+						root.get("productPackQuantity"),
+						root.get("productPackageUnitOfMeasure"),
+						root.get("productPrice"), 
+						root.get("productCurrentStockPackageCount"),
+						root.get("productEffectiveDate"), 
+						root.get("productLastEffectiveDate"),
+						root.get("oldProductId"), 
+						root.get("productCreatedDate"),
+						root.get("productUpdatedtedDate"))
 				.where(cb.isFalse(root.get("isDeleted")));
 		return entityManager.createQuery(criteriaQuery).getResultList();
 	}
@@ -78,10 +86,15 @@ public class ProductDaoImp implements ProductDao {
 		Predicate predicate = cb.lessThanOrEqualTo(root.get("productEffectiveDate"), date);
 		Predicate predicate1 = cb.or(cb.isNull(root.get("productLastEffectiveDate")),
 				cb.greaterThanOrEqualTo(root.get("productLastEffectiveDate"), date));
-		criteriaQuery.select(cb.construct(ActiveProductsListDto.class, root.get("productId"), root.get("productName"),
-				root.get("productPackageType"), root.get("productPackQuantity"),
-				root.get("productPackageUnitOfMeasure"), root.get("productPrice"),
-				root.get("productCurrentStockPackageCount"), root.get("productEffectiveDate"),
+		criteriaQuery.select(
+				cb.construct(ActiveProductsListDto.class, 
+				root.get("productId"), root.get("productName"),
+				root.get("productPackageType"), 
+				root.get("productPackQuantity"),
+				root.get("productPackageUnitOfMeasure"), 
+				root.get("productPrice"),
+				root.get("productCurrentStockPackageCount"), 
+				root.get("productEffectiveDate"),
 				root.get("productCreatedDate"))).where(cb.and(predicate, predicate1));
 
 		return entityManager.createQuery(criteriaQuery).getResultList();
@@ -93,6 +106,7 @@ public class ProductDaoImp implements ProductDao {
 		CriteriaQuery<ActiveProductsListDto> criteriaQuery = cb.createQuery(ActiveProductsListDto.class);
 
 		Root<ProductModel> root = criteriaQuery.from(ProductModel.class);
+		
 		Predicate effectivePredicate = cb.greaterThan(root.get("productEffectiveDate"), date);
 
 		Predicate ExpiredPredicate = cb.and(cb.isNotNull(root.get("productLastEffectiveDate")),
@@ -100,10 +114,15 @@ public class ProductDaoImp implements ProductDao {
 
 		Predicate inactivePredicate = cb.or(effectivePredicate, ExpiredPredicate);
 
-		criteriaQuery.select(cb.construct(ActiveProductsListDto.class, root.get("productId"), root.get("productName"),
-				root.get("productPackageType"), root.get("productPackQuantity"),
-				root.get("productPackageUnitOfMeasure"), root.get("productPrice"),
-				root.get("productCurrentStockPackageCount"), root.get("productEffectiveDate"),
+		criteriaQuery.select(cb.construct(ActiveProductsListDto.class, 
+				root.get("productId"), 
+				root.get("productName"),
+				root.get("productPackageType"), 
+				root.get("productPackQuantity"),
+				root.get("productPackageUnitOfMeasure"), 
+				root.get("productPrice"),
+				root.get("productCurrentStockPackageCount"), 
+				root.get("productEffectiveDate"),
 				root.get("productCreatedDate"))).where(inactivePredicate);
 
 		return entityManager.createQuery(criteriaQuery).getResultList();
@@ -119,6 +138,12 @@ public class ProductDaoImp implements ProductDao {
 	@Override
 	public Optional<ProductModel> findByProductId(Long productId) {
 		return productRepository.findById(productId);
+	}
+
+
+	@Override
+	public Object saveProduct(ProductModel newProduct) {
+		return productRepository.save(newProduct);
 	}
 
 }

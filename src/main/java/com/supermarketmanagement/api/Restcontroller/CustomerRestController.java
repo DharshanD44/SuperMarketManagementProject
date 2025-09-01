@@ -16,6 +16,7 @@ import com.supermarketmanagement.api.Model.Custom.Customer.CustomerMessageDto;
 import com.supermarketmanagement.api.Model.Entity.CustomerModel;
 import com.supermarketmanagement.api.Service.CustomerService;
 
+import retrofit2.http.PATCH;
 import retrofit2.http.Path;
 
 @RestController
@@ -32,22 +33,21 @@ public class CustomerRestController {
 	}
 	
 	@PostMapping("/addorUpdate")
-	public ResponseEntity<String> addCustomerDetails(@RequestBody CustomerListDto customerListDto){
+	public ResponseEntity<String> addorUpdateCustomerDetails(@RequestBody CustomerListDto customerListDto){
 		boolean isNew = customerListDto.getCustomerId()==null;
-		customerService.addCustomerDetails(customerListDto);
+		customerService.addorUpdateCustomerDetails(customerListDto);
 		if(isNew) {
 			return ResponseEntity.ok(CustomerMessageDto.CUSTOMER_ADDED);
 		}
 		else {
-			return ResponseEntity.ok(CustomerMessageDto.CUSTOMER_UPDATED);
+			return ResponseEntity.ok(customerService.addorUpdateCustomerDetails(customerListDto));
 		}
 	}
 	
 	@PostMapping("/delete/id/{id}")
 	public ResponseEntity<String> deleteCustomerById(@PathVariable Long id){
-		customerService.deleteCustomerById(id);
-		return ResponseEntity.ok(CustomerMessageDto.CUSTOMER_DELETED);
+		
+		return ResponseEntity.ok(customerService.deleteCustomerById(id));
 	}
-	
 
 }

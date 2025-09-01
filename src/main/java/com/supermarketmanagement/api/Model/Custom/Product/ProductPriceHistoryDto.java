@@ -1,6 +1,7 @@
 package com.supermarketmanagement.api.Model.Custom.Product;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ProductPriceHistoryDto {
 
@@ -10,7 +11,7 @@ public class ProductPriceHistoryDto {
 	
 	private Double productPrice;
 	
-	private LocalDate productEffectiveDate;
+	private LocalDateTime productEffectiveDate;
 
 	public Long getProductId() {
 		return productId;
@@ -36,16 +37,16 @@ public class ProductPriceHistoryDto {
 		this.productPrice = productPrice;
 	}
 
-	public LocalDate getProductEffectiveDate() {
+	public LocalDateTime getProductEffectiveDate() {
 		return productEffectiveDate;
 	}
 
-	public void setProductEffectiveDate(LocalDate productEffectiveDate) {
+	public void setProductEffectiveDate(LocalDateTime productEffectiveDate) {
 		this.productEffectiveDate = productEffectiveDate;
 	}
 
 	public ProductPriceHistoryDto(Long productId, String productName, Double productPrice,
-			LocalDate productEffectiveDate) {
+			LocalDateTime productEffectiveDate) {
 		
 		this.productId = productId;
 		this.productName = productName;

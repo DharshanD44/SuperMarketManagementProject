@@ -10,7 +10,7 @@ public interface CustomerService {
 
 	List<CustomerListDto> getAllCustomerDetails();
 
-	CustomerModel addCustomerDetails(CustomerListDto customerListDto);
+	String addorUpdateCustomerDetails(CustomerListDto customerListDto);
 
-	CustomerModel deleteCustomerById(Long id);
+	String deleteCustomerById(Long id);
 }

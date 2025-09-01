@@ -24,4 +24,6 @@ public interface ProductDao {
 
 	Optional<ProductModel> findByProductId(Long productId);
 
+	Object saveProduct(ProductModel newProduct);
+
 }

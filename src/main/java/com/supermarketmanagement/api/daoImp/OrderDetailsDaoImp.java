@@ -8,7 +8,9 @@ import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerMessageDto;
+import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderDetailsListDto;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderLineItemsDto;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderMessageDto;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderRequestDto;
@@ -26,6 +28,12 @@ import com.supermarketmanagement.api.Repository.OrderLineItemDetailsRepoistory;
 import com.supermarketmanagement.api.Repository.ProductRepository;
 import com.supermarketmanagement.api.dao.OrderDetailsDao;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.persistence.criteria.CriteriaBuilder.In;
 import jakarta.transaction.Transactional;
 
@@ -41,106 +49,13 @@ public class OrderDetailsDaoImp implements OrderDetailsDao {
 
 	@Autowired
 	private OrderDetailsRepoistory orderdetailsRepoistory;
+	
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	@Autowired
 	private OrderLineItemDetailsRepoistory orderLineItemDetailsRepoistory;
-
-	public Object placeOrder(OrderRequestDto requestDto) {
-
-		CustomerModel customerModel = customerRepoistory.findById(requestDto.getCustomerId())
-				.orElseThrow(() -> new RuntimeException(CustomerMessageDto.CUSTOMER_NOT_FOUND));
-
-		float totalPrice=0;
-		OrderDetailsModel orderDetailsDao = new OrderDetailsModel();
-		orderDetailsDao.setCustomer(customerModel);
-		orderDetailsDao.setOrderExpectedDate(LocalDate.now().plusDays(2));
-		orderDetailsDao.setOrderDate(LocalDate.now());
-		orderDetailsDao.setCreatedDate(LocalDate.now());
-
-		for (OrderLineItemsDto itemsDto : requestDto.getItems()) {
-			
-			float individualPrice =0;
-
-			ProductModel productModel = productRepository.findById(itemsDto.getProductId())
-					.orElseThrow(() -> new RuntimeException(ProductMessageDto.PRODUCT_ID_NOT_FOUND));
-
-			Integer packageSize = productModel.getProductPackQuantity();
-
-			Integer requestUnits = itemsDto.getOrderQuantityIndividualUnit();
-
-			Integer requiredPackage = (int) Math.ceil((double) requestUnits / packageSize);
-
-			Integer adjustedUnits = requiredPackage * packageSize;
-			
-			individualPrice = (float) (requiredPackage * productModel.getProductPrice());
-			
-			totalPrice +=individualPrice;
-			
-			if (requiredPackage <= productModel.getProductCurrentStockPackageCount()) {
-				OrderLineItemDetailsModel itemDetailsModel1 = new OrderLineItemDetailsModel();
-				itemDetailsModel1.setProduct(productModel);
-				itemDetailsModel1.setOrder(orderDetailsDao);
-				itemDetailsModel1.setPrice(individualPrice);
-				itemDetailsModel1.setCreatedDate(LocalDate.now());
-				itemDetailsModel1.setOrderQuantityInPackage(requiredPackage);
-				itemDetailsModel1.setOrderQuantityIndividualUnit(adjustedUnits);
-				orderDetailsDao.getLineItemDetailsModels().add(itemDetailsModel1);
-				productModel.setProductCurrentStockPackageCount(
-						productModel.getProductCurrentStockPackageCount() - requiredPackage);
-				productRepository.save(productModel);
-			} else {
-				return OrderMessageDto.ORDER_QUANTITY_OUT_OF_STOCK + productModel.getProductName();
-			}
-		}
-		orderDetailsDao.setTotalprice(totalPrice);
-		return orderdetailsRepoistory.save(orderDetailsDao);
-	}
-
-	public Object updatePlacedOrder(OrderUpdateRequestDto updaterequestDto) {
-
-		OrderDetailsModel detailsModel = orderdetailsRepoistory.findById(updaterequestDto.getOrderId())
-				.orElseThrow(() -> new RuntimeException(OrderMessageDto.ORDER_ID_NOT_FOUND));
-
-		if (detailsModel.getOrderStatus() != OrderStatusDto.NEW) {
-			return OrderMessageDto.CANT_UPDATE_ORDER;
-		}
-
-		for (UpdateOrderLineItemsDto items : updaterequestDto.getItems()) {
-
-			detailsModel.getLineItemDetailsModels();
-			OrderLineItemDetailsModel lineItem = orderLineItemDetailsRepoistory.findById(items.getOrderLineId())
-					.orElseThrow(()->new RuntimeException(OrderMessageDto.ORDER_LINE_ID_NOT_FOUND));
-
-			if (!lineItem.getOrder().getOrderId().equals(detailsModel.getOrderId())) {
-	            throw new RuntimeException("OrderLineItem " + items.getOrderLineId() + " does not belong to Order " + detailsModel.getOrderId());
-	        }
-			
-			if (lineItem.getOrderLineItemStatus() == OrderStatusDto.PACKED) {
-				return lineItem.getProduct().getProductName() + " has been packed. Product can't be updated!";
-			}
-
-			ProductModel productModel = productRepository.findById(lineItem.getProduct().getProductId())
-					.orElseThrow(() -> new RuntimeException(ProductMessageDto.PRODUCT_ID_NOT_FOUND));
-
-			Integer packageSize = productModel.getProductPackQuantity();
-
-			Integer requestUnits = items.getOrderQuantityIndividualUnit();
-
-			Integer requiredPackage = (int) Math.ceil((double) requestUnits / packageSize);
-
-			Integer adjustedUnits = requiredPackage * packageSize;
-			detailsModel.setUpdateDate(LocalDate.now());
-
-			lineItem.setOrderQuantityIndividualUnit(null);
-			lineItem.setProduct(productModel);
-			lineItem.setOrder(detailsModel);
-			lineItem.setCreatedDate(LocalDate.now());
-			lineItem.setOrderQuantityInPackage(requiredPackage);
-			lineItem.setOrderQuantityIndividualUnit(adjustedUnits);
-		}
-		detailsModel.setUpdateDate(LocalDate.now());
-		return detailsModel;
-	}
+	
 
 	@Override
 	public OrderDetailsModel findByOrderId(Long id) {
@@ -155,5 +70,52 @@ public class OrderDetailsDaoImp implements OrderDetailsDao {
 			throw new RuntimeException(OrderMessageDto.ORDER_ID_NOT_FOUND);
 		}
 		return items;
+	}
+
+	@Override
+	public CustomerModel findByCustomerId(Long customerId) {
+		return customerRepoistory.findById(customerId).orElseThrow(
+				()-> new RuntimeException(CustomerMessageDto.CUSTOMER_NOT_FOUND +" " + customerId)
+				);
+	}
+
+	@Override
+	public ProductModel findByProductId(Long productId) {
+		return productRepository.findById(productId).orElseThrow(
+				()-> new RuntimeException(ProductMessageDto.PRODUCT_ID_NOT_FOUND +" " + productId)
+				);
+	}
+
+	@Override
+	public Object saveOrderDetails(OrderDetailsModel orderDetailsDao) {
+		return orderdetailsRepoistory.save(orderDetailsDao);
+	}
+
+	@Override
+	public OrderLineItemDetailsModel findByOrderLineId(Long orderLineId) {
+		return orderLineItemDetailsRepoistory.findById(orderLineId).orElseThrow(
+				()-> new RuntimeException(OrderMessageDto.ORDER_LINE_ID_NOT_FOUND +" " + orderLineId)
+				);
+	}
+
+	@Override
+	public Object getOrderDetailsById(Long orderid) {
+		
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<OrderDetailsListDto> criteriaQuery = cb.createQuery(OrderDetailsListDto.class);
+		Root<OrderDetailsModel> orderDetailsModelRoot = criteriaQuery.from(OrderDetailsModel.class);
+		Predicate predicate = cb.equal(orderDetailsModelRoot.get("orderId"),orderid);
+		criteriaQuery.multiselect(
+		        orderDetailsModelRoot.get("orderId"),
+		        orderDetailsModelRoot.get("orderDate"),
+		        orderDetailsModelRoot.get("customer").get("customerId"),
+		        orderDetailsModelRoot.get("orderExpectedDate"),
+		        orderDetailsModelRoot.get("orderStatus"),
+		        orderDetailsModelRoot.get("createdDate"),
+		        orderDetailsModelRoot.get("updateDate"),
+		        orderDetailsModelRoot.get("totalprice"))
+				.where(predicate);
+		
+		return entityManager.createQuery(criteriaQuery).getResultList();
 	}
 }

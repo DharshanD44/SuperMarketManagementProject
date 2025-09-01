@@ -9,14 +9,20 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 @Entity
 @Table(name = "customer_master")
 public class CustomerModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Auto increment for customerId
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
     @Column(name = "customer_id")
     private Long customerId;
 
@@ -41,17 +47,32 @@ public class CustomerModel {
     @Column(name = "customer_email", unique = true)
     private String customerEmail;
 
+//    @JsonSerialize(using = LocalDateTimeSerializer.class)
+//    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @Column(name = "customer_createdDate")
-    private LocalDate customerCreatedDate;
-    
+    private LocalDateTime customerCreatedDate;
+    	
+//    @JsonSerialize(using = LocalDateTimeSerializer.class)
+//    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @Column(name = "customer_last_effective_date")
-    private LocalDate customerLastEffectiveDate;
+    private LocalDateTime customerLastEffectiveDate;
     
+//    @JsonSerialize(using = LocalDateTimeSerializer.class)
+//    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @Column(name = "customer_updated_date")
+    private LocalDateTime customerUpdatedDate;
     
-    @OneToMany
+	@OneToMany
     private List<OrderDetailsModel> detailsModels;
     
-    
+    public LocalDateTime getCustomerUpdatedDate() {
+		return customerUpdatedDate;
+	}
+
+	public void setCustomerUpdatedDate(LocalDateTime customerUpdatedDate) {
+		this.customerUpdatedDate = customerUpdatedDate;
+	}
+
     public CustomerModel() {}
 
     public Long getCustomerId() {
@@ -113,10 +134,31 @@ public class CustomerModel {
     public String getCustomerEmail() {
         return customerEmail;
     }
+    
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
+    }
 
-    public CustomerModel(String customerName, String customerMobileno, String customerAddress, String customerLocation,
-			String customerCity, String customerPincode, String customerEmail, LocalDate customerCreatedDate,LocalDate customerLastEffectiveDate) {
-		
+    public LocalDateTime getCustomerCreatedDate() {
+        return customerCreatedDate;
+    }
+
+    public void setCustomerCreatedDate(LocalDateTime customerCreatedDate) {
+        this.customerCreatedDate = customerCreatedDate;
+    }
+
+	public LocalDateTime getCustomerLastEffectiveDate() {
+		return customerLastEffectiveDate;
+	}
+
+	public void setCustomerLastEffectiveDate(LocalDateTime customerLastEffectiveDate) {
+		this.customerLastEffectiveDate = customerLastEffectiveDate;
+	}
+
+	public CustomerModel(String customerName, String customerMobileno, String customerAddress, String customerLocation,
+			String customerCity, String customerPincode, String customerEmail, LocalDateTime customerCreatedDate,
+			LocalDateTime customerLastEffectiveDate, LocalDateTime customerUpdatedDate) {
+		super();
 		this.customerName = customerName;
 		this.customerMobileno = customerMobileno;
 		this.customerAddress = customerAddress;
@@ -126,25 +168,7 @@ public class CustomerModel {
 		this.customerEmail = customerEmail;
 		this.customerCreatedDate = customerCreatedDate;
 		this.customerLastEffectiveDate = customerLastEffectiveDate;
-	}
+		this.customerUpdatedDate = customerUpdatedDate;
+		}
 
-	public void setCustomerEmail(String customerEmail) {
-        this.customerEmail = customerEmail;
-    }
-
-    public LocalDate getCustomerCreatedDate() {
-        return customerCreatedDate;
-    }
-
-    public void setCustomerCreatedDate(LocalDate customerCreatedDate) {
-        this.customerCreatedDate = customerCreatedDate;
-    }
-
-	public LocalDate getCustomerLastEffectiveDate() {
-		return customerLastEffectiveDate;
-	}
-
-	public void setCustomerLastEffectiveDate(LocalDate customerLastEffectiveDate) {
-		this.customerLastEffectiveDate = customerLastEffectiveDate;
-	}
 }

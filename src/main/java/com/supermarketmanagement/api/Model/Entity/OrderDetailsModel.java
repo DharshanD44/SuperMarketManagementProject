@@ -1,6 +1,6 @@
 package com.supermarketmanagement.api.Model.Entity;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +30,7 @@ public class OrderDetailsModel {
     private Long orderId;
 
     @Column(name = "order_date", nullable = false)
-    private LocalDate orderDate;
+    private LocalDateTime orderDate;
 
     @ManyToOne(fetch = FetchType.LAZY) 
     @JoinColumn(name = "customer_id", nullable = false)  
@@ -45,17 +45,17 @@ public class OrderDetailsModel {
 	}
 
 	@Column(name = "order_expected_date")
-    private LocalDate orderExpectedDate;
+    private LocalDateTime orderExpectedDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false)
     private OrderStatusDto orderStatus=OrderStatusDto.NEW;
 
     @Column(name = "created_date")
-    private LocalDate createdDate = LocalDate.now();
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(name = "update_date")
-    private LocalDate updateDate;
+    private LocalDateTime updateDate;
     
     @Column(name = "total_price")
     private float totalprice;
@@ -73,12 +73,12 @@ public class OrderDetailsModel {
 	}
 
 
-	public LocalDate getOrderDate() {
+	public LocalDateTime  getOrderDate() {
 		return orderDate;
 	}
 
 
-	public void setOrderDate(LocalDate orderDate) {
+	public void setOrderDate(LocalDateTime orderDate) {
 		this.orderDate = orderDate;
 	}
 
@@ -87,18 +87,17 @@ public class OrderDetailsModel {
 		return customer;
 	}
 
-
 	public void setCustomer(CustomerModel customer) {
 		this.customer = customer;
 	}
 
 
-	public LocalDate getOrderExpectedDate() {
+	public LocalDateTime getOrderExpectedDate() {
 		return orderExpectedDate;
 	}
 
 
-	public void setOrderExpectedDate(LocalDate orderExpectedDate) {
+	public void setOrderExpectedDate(LocalDateTime orderExpectedDate) {
 		this.orderExpectedDate = orderExpectedDate;
 	}
 
@@ -113,22 +112,22 @@ public class OrderDetailsModel {
 	}
 
 
-	public LocalDate getCreatedDate() {
+	public LocalDateTime getCreatedDate() {
 		return createdDate;
 	}
 
 
-	public void setCreatedDate(LocalDate createdDate) {
+	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
 	}
 
 
-	public LocalDate getUpdateDate() {
+	public LocalDateTime  getUpdateDate() {
 		return updateDate;
 	}
 
 
-	public void setUpdateDate(LocalDate updateDate) {
+	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 
@@ -142,8 +141,8 @@ public class OrderDetailsModel {
 		this.lineItemDetailsModels = lineItemDetailsModels;
 	}
 
-	public OrderDetailsModel(LocalDate orderDate, CustomerModel customer, LocalDate orderExpectedDate,
-			OrderStatusDto orderStatus, LocalDate createdDate, LocalDate updateDate, float totalprice,
+	public OrderDetailsModel(LocalDateTime orderDate, CustomerModel customer, LocalDateTime orderExpectedDate,
+			OrderStatusDto orderStatus, LocalDateTime createdDate, LocalDateTime updateDate, float totalprice,
 			List<OrderLineItemDetailsModel> lineItemDetailsModels) {
 		super();
 		this.orderDate = orderDate;

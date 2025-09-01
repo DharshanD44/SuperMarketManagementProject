@@ -17,4 +17,6 @@ public interface OrderDetailsService {
 
 	Object updateLineOrderLineStatus(String status, List<Long> id);
 
+	Object getOrderDetailsById(Long orderid);
+
 }
