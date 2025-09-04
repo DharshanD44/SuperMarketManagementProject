@@ -1,6 +1,7 @@
 package com.supermarketmanagement.api.Restcontroller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.supermarketmanagement.api.Model.Custom.Product.ActiveProductsListDto;
+import com.supermarketmanagement.api.Model.Custom.Product.InactiveProductListDto;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductListDto;
+import com.supermarketmanagement.api.Model.Custom.Product.ProductListRequestModel;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductMessageDto;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductPriceHistoryDto;
 import com.supermarketmanagement.api.Model.Entity.ProductModel;
@@ -29,11 +32,17 @@ public class ProductRestController {
 	@Autowired
 	private ProductService productService;
 	
-	@GetMapping("/list")
-	public ResponseEntity<List<ProductListDto>>  getAllProductDetails(){
+//	@GetMapping("/list")
+//	public ResponseEntity<List<ProductListDto>>  getAllProductDetails(){
+//		
+//		return new ResponseEntity<List<ProductListDto>>(productService.getAllProductDetails(),HttpStatus.OK);
+//	}
 		
-		return new ResponseEntity<List<ProductListDto>>(productService.getAllProductDetails(),HttpStatus.OK);
+	@GetMapping("/list")
+	public ResponseEntity<?> getProducts(@RequestBody ProductListRequestModel request) {
+	    return ResponseEntity.ok(productService.getAllProductDetails(request));
 	}
+
 	
 	@PutMapping("/update")
     public ResponseEntity<?> updateProduct(@RequestBody ProductModel updatedProduct) {
@@ -43,19 +52,20 @@ public class ProductRestController {
 	
 	@GetMapping("/view/id/{id}")
 	public ResponseEntity<ProductModel> getProductDetailsById(@PathVariable int id){
-	    return new ResponseEntity<ProductModel>(productService.getProductDetailsById(id), HttpStatus.OK);
+		ProductModel product = productService.getProductDetailsById(id);
+	    return ResponseEntity.ok(product);
 	}
 	
 	@GetMapping("/view/active")
-	public ResponseEntity<List<ActiveProductsListDto>> getActiveProductDetails(@RequestParam("date") LocalDate date)
+	public ResponseEntity<List<ActiveProductsListDto>> getActiveProductDetails(@RequestParam("date") LocalDateTime date)
 	{
 		return new ResponseEntity<List<ActiveProductsListDto>>(productService.getActiveProductDetails(date),HttpStatus.OK);
 	}
 	
 	@GetMapping("/view/Inactive")
-	public ResponseEntity<List<ActiveProductsListDto>> getInActiveProductDetails(@RequestParam("date") LocalDate date)
+	public ResponseEntity<List<InactiveProductListDto>> getInActiveProductDetails(@RequestParam("date") LocalDateTime date)
 	{
-		return new ResponseEntity<List<ActiveProductsListDto>>(productService.getInActiveProductDetails(date),HttpStatus.OK);
+		return new ResponseEntity<List<InactiveProductListDto>>(productService.getInActiveProductDetails(date),HttpStatus.OK);
 	}
 	
 	@PostMapping("/add")

@@ -157,9 +157,6 @@ public class OrderDetailsModel {
 
 	public OrderDetailsModel() {
 		
-	}
- 
-   
-    
+	}  
 }
 

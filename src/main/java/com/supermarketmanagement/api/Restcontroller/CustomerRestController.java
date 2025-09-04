@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
+import com.supermarketmanagement.api.Model.Custom.Response;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
+import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListResponse;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerMessageDto;
 import com.supermarketmanagement.api.Model.Entity.CustomerModel;
 import com.supermarketmanagement.api.Service.CustomerService;
@@ -28,21 +30,21 @@ public class CustomerRestController {
 
 	
 	@GetMapping("/list")
-	public ResponseEntity<List<CustomerListDto>>  getAllCustomerDetails(){
-		return new ResponseEntity<List<CustomerListDto>>(customerService.getAllCustomerDetails(),HttpStatus.OK);
+	public ResponseEntity<CustomerListResponse>  getAllCustomerDetails(){
+		return new ResponseEntity<CustomerListResponse>(customerService.getAllCustomerDetails(),HttpStatus.OK);
 	}
 	
-	@PostMapping("/addorUpdate")
-	public ResponseEntity<String> addorUpdateCustomerDetails(@RequestBody CustomerListDto customerListDto){
-		boolean isNew = customerListDto.getCustomerId()==null;
-		customerService.addorUpdateCustomerDetails(customerListDto);
-		if(isNew) {
-			return ResponseEntity.ok(CustomerMessageDto.CUSTOMER_ADDED);
-		}
-		else {
-			return ResponseEntity.ok(customerService.addorUpdateCustomerDetails(customerListDto));
-		}
-	}
+//	@PostMapping("/addorUpdate")
+//	public ResponseEntity<R> addorUpdateCustomerDetails(@RequestBody CustomerListDto customerListDto){
+//		boolean isNew = customerListDto.getCustomerId()==null;
+//		customerService.addorUpdateCustomerDetails(customerListDto);
+//		if(isNew) {
+//			return ResponseEntity.ok(CustomerMessageDto.CUSTOMER_ADDED);
+//		}
+//		else {
+//			return ResponseEntity.ok(customerService.addorUpdateCustomerDetails(customerListDto));
+//		}
+//	}
 	
 	@PostMapping("/delete/id/{id}")
 	public ResponseEntity<String> deleteCustomerById(@PathVariable Long id){

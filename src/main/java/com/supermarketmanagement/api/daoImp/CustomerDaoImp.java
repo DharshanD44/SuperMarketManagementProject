@@ -6,10 +6,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.supermarketmanagement.api.Model.Custom.Response;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
+import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListResponse;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerMessageDto;
 import com.supermarketmanagement.api.Model.Entity.CustomerModel;
 import com.supermarketmanagement.api.Repository.CustomerRepoistory;
+import com.supermarketmanagement.api.Util.WebServiceUtil;
 import com.supermarketmanagement.api.dao.CustomerDao;
 
 import jakarta.persistence.EntityManager;
@@ -36,7 +39,6 @@ public class CustomerDaoImp implements CustomerDao{
 		CriteriaQuery<CustomerListDto> criteriaQuery = cb.createQuery(CustomerListDto.class);
 		
 		Root<CustomerModel> root = criteriaQuery.from(CustomerModel.class);
-		
 		criteriaQuery.multiselect(
 			    root.get("customerId"),
 			    root.get("customerName"),
@@ -49,17 +51,20 @@ public class CustomerDaoImp implements CustomerDao{
 			    root.get("customerCreatedDate"),
 			    root.get("customerUpdatedDate")
 			).where(root.get("customerLastEffectiveDate").isNull());
-
-		return entityManager.createQuery(criteriaQuery).getResultList();
+		return entityManager.createQuery(criteriaQuery).getResultList();	
+		
 	}
 
 
 	@Override
 	public CustomerModel findByCustomerId(Long customerId) {
-		
-		return customerRepoistory.findById(customerId).orElseThrow(
-				()-> new RuntimeException(CustomerMessageDto.CUSTOMER_NOT_FOUND +" "+customerId)
-				);
+		return customerRepoistory.getById(customerId);
+	}
+
+
+	@Override
+	public void saveCustomer(CustomerModel entity) {
+		customerRepoistory.save(entity);
 	}
 	
 	

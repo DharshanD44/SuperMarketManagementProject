@@ -1,6 +1,6 @@
 package com.supermarketmanagement.api.Model.Custom.Product;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ProductListDto {
 
@@ -11,19 +11,19 @@ public class ProductListDto {
 	private String productPackageUnitOfMeasure;
 	private Double productPrice;
 	private Integer productCurrentStockPackageCount;
-	private LocalDate productEffectiveDate;
-	private LocalDate productLastEffectiveDate;
+	private LocalDateTime productEffectiveDate;
+	private LocalDateTime productLastEffectiveDate;
 	private Long oldProductId;
-	private LocalDate productCreatedDate;
-	private LocalDate productUpdatedtedDate;
+	private LocalDateTime productCreatedDate;
+	private LocalDateTime productUpdatedtedDate;
 
 	public ProductListDto() {
 	}
 
 	public ProductListDto(Long productId, String productName, String productPackageType, Integer productPackQuantity,
 			String productPackageUnitOfMeasure, Double productPrice, Integer productCurrentStockPackageCount,
-			LocalDate productEffectiveDate, LocalDate productLastEffectiveDate, Long oldProductId,
-			LocalDate productCreatedDate, LocalDate productUpdatedtedDate) {
+			LocalDateTime productEffectiveDate, LocalDateTime productLastEffectiveDate, Long oldProductId,
+			LocalDateTime productCreatedDate, LocalDateTime productUpdatedtedDate) {
 		this.productId = productId;
 		this.productName = productName;
 		this.productPackageType = productPackageType;
@@ -40,8 +40,7 @@ public class ProductListDto {
 
 	public ProductListDto(Long productId, String productName, String productPackageType, Integer productPackQuantity,
 			String productPackageUnitOfMeasure, Double productPrice, Integer productCurrentStockPackageCount,
-			LocalDate productEffectiveDate,
-			LocalDate productCreatedDate) {
+			LocalDateTime productEffectiveDate, LocalDateTime productCreatedDate) {
 		this.productId = productId;
 		this.productName = productName;
 		this.productPackageType = productPackageType;
@@ -109,19 +108,19 @@ public class ProductListDto {
 		this.productCurrentStockPackageCount = productCurrentStockPackageCount;
 	}
 
-	public LocalDate getProductEffectiveDate() {
+	public LocalDateTime getProductEffectiveDate() {
 		return productEffectiveDate;
 	}
 
-	public void setProductEffectiveDate(LocalDate productEffectiveDate) {
+	public void setProductEffectiveDate(LocalDateTime productEffectiveDate) {
 		this.productEffectiveDate = productEffectiveDate;
 	}
 
-	public LocalDate getProductLastEffectiveDate() {
+	public LocalDateTime getProductLastEffectiveDate() {
 		return productLastEffectiveDate;
 	}
 
-	public void setProductLastEffectiveDate(LocalDate productLastEffectiveDate) {
+	public void setProductLastEffectiveDate(LocalDateTime productLastEffectiveDate) {
 		this.productLastEffectiveDate = productLastEffectiveDate;
 	}
 
@@ -133,19 +132,19 @@ public class ProductListDto {
 		this.oldProductId = oldProductId;
 	}
 
-	public LocalDate getProductCreatedDate() {
+	public LocalDateTime getProductCreatedDate() {
 		return productCreatedDate;
 	}
 
-	public void setProductCreatedDate(LocalDate productCreatedDate) {
+	public void setProductCreatedDate(LocalDateTime productCreatedDate) {
 		this.productCreatedDate = productCreatedDate;
 	}
 
-	public LocalDate getProductUpdatedtedDate() {
+	public LocalDateTime getProductUpdatedtedDate() {
 		return productUpdatedtedDate;
 	}
 
-	public void setProductUpdatedtedDate(LocalDate productUpdatedtedDate) {
+	public void setProductUpdatedtedDate(LocalDateTime productUpdatedtedDate) {
 		this.productUpdatedtedDate = productUpdatedtedDate;
 	}
 }

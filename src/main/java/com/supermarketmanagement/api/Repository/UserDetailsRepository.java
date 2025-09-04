@@ -3,11 +3,9 @@ package com.supermarketmanagement.api.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.supermarketmanagement.api.Model.Entity.CustomerModel;
+import com.supermarketmanagement.api.Model.Entity.UserModel;
 
 @Repository
-public interface CustomerRepoistory extends JpaRepository<CustomerModel, Long>{
-	
-	
+public interface UserDetailsRepository extends JpaRepository<UserModel, Long>{
 
 }

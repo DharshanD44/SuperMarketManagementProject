@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.supermarketmanagement.api.Model.Custom.Product.ActiveProductsListDto;
+import com.supermarketmanagement.api.Model.Custom.Product.InactiveProductListDto;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductListDto;
+import com.supermarketmanagement.api.Model.Custom.Product.ProductListRequestModel;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductMessageDto;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductPriceHistoryDto;
 import com.supermarketmanagement.api.Model.Entity.ProductModel;
@@ -28,11 +31,11 @@ public class ProductServiceImp implements ProductService{
 	@Autowired
 	private ProductDao productDao;
 
-	@Override
-	public List<ProductListDto> getAllProductDetails() {
-
-		return productDao.getAllProductDetails();
-	}
+//	@Override
+//	public List<ProductListDto> getAllProductDetails() {
+//
+//		return productDao.getAllProductDetails();
+//	}
 
 	@Override
 	public Object updateProduct(ProductModel updatedProduct) {
@@ -92,13 +95,13 @@ public class ProductServiceImp implements ProductService{
 	}
 
 	@Override
-	public List<ActiveProductsListDto> getActiveProductDetails(LocalDate date) {
+	public List<ActiveProductsListDto> getActiveProductDetails(LocalDateTime date) {
 		
 		return productDao.getActiveProductDetails(date);
 	}
 
 	@Override
-	public List<ActiveProductsListDto> getInActiveProductDetails(LocalDate date) {
+	public List<InactiveProductListDto> getInActiveProductDetails(LocalDateTime date) {
 		
 		return productDao.getInActiveProductDetails(date);
 	}
@@ -155,6 +158,11 @@ public class ProductServiceImp implements ProductService{
 
 		return result;
 		
+	}
+
+	@Override
+	public Map<String, Object> getAllProductDetails(ProductListRequestModel request) {
+		return productDao.getAllProductDetails(request);
 	}
 
 }

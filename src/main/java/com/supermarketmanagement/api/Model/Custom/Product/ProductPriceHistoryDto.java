@@ -1,6 +1,5 @@
 package com.supermarketmanagement.api.Model.Custom.Product;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class ProductPriceHistoryDto {

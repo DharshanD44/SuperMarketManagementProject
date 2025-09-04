@@ -1,9 +1,12 @@
 package com.supermarketmanagement.api.ServiceImp;
 
+import com.supermarketmanagement.api.Model.Custom.Response;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
+import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListResponse;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerMessageDto;
 import com.supermarketmanagement.api.Model.Entity.CustomerModel;
 import com.supermarketmanagement.api.Service.CustomerService;
+import com.supermarketmanagement.api.Util.WebServiceUtil;
 import com.supermarketmanagement.api.dao.CustomerDao;
 
 import jakarta.transaction.Transactional;
@@ -23,16 +26,19 @@ public class CustomerServiceImp implements CustomerService{
 	private CustomerDao customerDao;
 	
 	@Override
-	public List<CustomerListDto> getAllCustomerDetails() {
-		
-		return customerDao.getCustomerListDtos();
+	public CustomerListResponse getAllCustomerDetails() {
+		CustomerListResponse customerListResponse = new CustomerListResponse();
+		customerDao.getCustomerListDtos();
+		customerListResponse.setStatus(WebServiceUtil.SUCCESS_STATUS);
+		customerListResponse.setCustomerListDtos(customerDao.getCustomerListDtos());
+		return customerListResponse;
 	}
 
 	@Override
-	public String addorUpdateCustomerDetails(CustomerListDto customerListDto) {
+	public Response addorUpdateCustomerDetails(CustomerListDto customerListDto) {
 		
 		CustomerModel entity;
-		
+		Response response= new Response();
 		if(customerListDto.getCustomerId() == null)
 		{
 			entity = new CustomerModel();
@@ -41,6 +47,13 @@ public class CustomerServiceImp implements CustomerService{
 		else
 		{
 			entity = customerDao.findByCustomerId(customerListDto.getCustomerId());
+			if(entity==null)
+			{
+				response.setStatus(WebServiceUtil.FAILED_STATUS);
+				response.setData(CustomerMessageDto.CUSTOMER_NOT_FOUND);
+				return response;
+			}
+			entity.setCustomerUpdatedDate(LocalDateTime.now());
 		}
 		entity.setCustomerName(customerListDto.getCustomerName());
 		entity.setCustomerMobileno(customerListDto.getCustomerMobileno());
@@ -49,9 +62,12 @@ public class CustomerServiceImp implements CustomerService{
 		entity.setCustomerCity(customerListDto.getCustomerCity());
 		entity.setCustomerPincode(customerListDto.getCustomerPincode());
 		entity.setCustomerEmail(customerListDto.getCustomerEmail());
-		entity.setCustomerUpdatedDate(LocalDateTime.now());
+		
+		customerDao.saveCustomer(entity);
 //		entity.setCustomerUpdatedDate(customerListDto.getCustomerUpdatedDate());
-		return CustomerMessageDto.CUSTOMER_UPDATED;
+		response.setStatus(WebServiceUtil.SUCCESS_STATUS);
+		response.setData(CustomerMessageDto.CUSTOMER_UPDATED);
+		return response;
 		
 	}
 

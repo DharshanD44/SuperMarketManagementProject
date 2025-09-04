@@ -2,7 +2,7 @@ package com.supermarketmanagement.api.Model.Custom.Product;
 
 import java.time.LocalDateTime;
 
-public class ActiveProductsListDto {
+public class InactiveProductListDto {
 
 	private Long productId;
 	private String productName;
@@ -11,24 +11,9 @@ public class ActiveProductsListDto {
 	private String productPackageUnitOfMeasure;
 	private Double productPrice;
 	private Integer productCurrentStockPackageCount;
-	private LocalDateTime productEffectiveDate;
 	private LocalDateTime productCreatedDate;
-
-	public ActiveProductsListDto(Long productId, String productName, String productPackageType,
-			Integer productPackQuantity, String productPackageUnitOfMeasure, Double productPrice,
-			Integer productCurrentStockPackageCount, LocalDateTime productEffectiveDate,
-			LocalDateTime productCreatedDate) {
-		this.productId = productId;
-		this.productName = productName;
-		this.productPackageType = productPackageType;
-		this.productPackQuantity = productPackQuantity;
-		this.productPackageUnitOfMeasure = productPackageUnitOfMeasure;
-		this.productPrice = productPrice;
-		this.productCurrentStockPackageCount = productCurrentStockPackageCount;
-		this.productEffectiveDate = productEffectiveDate;
-		this.productCreatedDate = productCreatedDate;
-	}
-
+	private LocalDateTime productLastEffectiveDate;
+	
 	public Long getProductId() {
 		return productId;
 	}
@@ -85,20 +70,35 @@ public class ActiveProductsListDto {
 		this.productCurrentStockPackageCount = productCurrentStockPackageCount;
 	}
 
-	public LocalDateTime getProductEffectiveDate() {
-		return productEffectiveDate;
-	}
-
-	public void setProductEffectiveDate(LocalDateTime productEffectiveDate) {
-		this.productEffectiveDate = productEffectiveDate;
-	}
-
 	public LocalDateTime getProductCreatedDate() {
 		return productCreatedDate;
 	}
 
 	public void setProductCreatedDate(LocalDateTime productCreatedDate) {
 		this.productCreatedDate = productCreatedDate;
+	}
+
+	public LocalDateTime getProductLastEffectiveDate() {
+		return productLastEffectiveDate;
+	}
+
+	public void setProductLastEffectiveDate(LocalDateTime productLastEffectiveDate) {
+		this.productLastEffectiveDate = productLastEffectiveDate;
+	}
+
+	public InactiveProductListDto(Long productId, String productName, String productPackageType,
+			Integer productPackQuantity, String productPackageUnitOfMeasure, Double productPrice,
+			Integer productCurrentStockPackageCount, LocalDateTime productCreatedDate,
+			LocalDateTime productLastEffectiveDate) {
+		this.productId = productId;
+		this.productName = productName;
+		this.productPackageType = productPackageType;
+		this.productPackQuantity = productPackQuantity;
+		this.productPackageUnitOfMeasure = productPackageUnitOfMeasure;
+		this.productPrice = productPrice;
+		this.productCurrentStockPackageCount = productCurrentStockPackageCount;
+		this.productCreatedDate = productCreatedDate;
+		this.productLastEffectiveDate = productLastEffectiveDate;
 	}
 
 }
