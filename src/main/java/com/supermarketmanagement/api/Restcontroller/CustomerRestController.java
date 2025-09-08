@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
-import com.supermarketmanagement.api.Model.Custom.Response;
+import com.supermarketmanagement.api.Model.Custom.ResponseMessage;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListResponse;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerMessageDto;
@@ -29,27 +29,33 @@ public class CustomerRestController {
 	private CustomerService customerService;
 
 	
-	@GetMapping("/list")
+	@GetMapping("/list/all")
 	public ResponseEntity<CustomerListResponse>  getAllCustomerDetails(){
 		return new ResponseEntity<CustomerListResponse>(customerService.getAllCustomerDetails(),HttpStatus.OK);
 	}
 	
-//	@PostMapping("/addorUpdate")
-//	public ResponseEntity<R> addorUpdateCustomerDetails(@RequestBody CustomerListDto customerListDto){
-//		boolean isNew = customerListDto.getCustomerId()==null;
-//		customerService.addorUpdateCustomerDetails(customerListDto);
-//		if(isNew) {
-//			return ResponseEntity.ok(CustomerMessageDto.CUSTOMER_ADDED);
-//		}
-//		else {
-//			return ResponseEntity.ok(customerService.addorUpdateCustomerDetails(customerListDto));
-//		}
-//	}
+	@PostMapping("/addorUpdate")
+	public ResponseEntity<ResponseMessage> addorUpdateCustomerDetails(@RequestBody CustomerListDto customerListDto){
+		boolean isNew = customerListDto.getCustomerId()==null;
+		customerService.addorUpdateCustomerDetails(customerListDto);
+		if(isNew) {
+			return ResponseEntity.ok(customerService.addorUpdateCustomerDetails(customerListDto));
+		}
+		else {
+			return ResponseEntity.ok(customerService.addorUpdateCustomerDetails(customerListDto));
+		}
+	}
 	
 	@PostMapping("/delete/id/{id}")
-	public ResponseEntity<String> deleteCustomerById(@PathVariable Long id){
+	public ResponseEntity<ResponseMessage> deleteCustomerById(@PathVariable Long id){
 		
 		return ResponseEntity.ok(customerService.deleteCustomerById(id));
 	}
+	
+	@GetMapping("/list/id/{id}")
+	public ResponseEntity<?> findCustomerDetailsById(@PathVariable Long id){
+		return ResponseEntity.ok(customerService.findCustomerDetailsById(id));
+	}
+	
 
 }

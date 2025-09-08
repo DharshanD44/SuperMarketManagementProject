@@ -5,7 +5,7 @@ import java.util.List;
 public class CustomerListResponse {
 
 	private String status;
-	List<CustomerListDto> customerListDtos;
+	List<CustomerListDto> data;
 
 	public String getStatus() {
 		return status;
@@ -15,18 +15,18 @@ public class CustomerListResponse {
 		this.status = status;
 	}
 
-	public List<CustomerListDto> getCustomerListDtos() {
-		return customerListDtos;
+	public List<CustomerListDto> getData() {
+		return data;
 	}
 
-	public void setCustomerListDtos(List<CustomerListDto> customerListDtos) {
-		this.customerListDtos = customerListDtos;
+	public void setData(List<CustomerListDto> data) {
+		this.data = data;
 	}
-
-	public CustomerListResponse(String status, List<CustomerListDto> customerListDtos) {
+	
+	public CustomerListResponse(String status, List<CustomerListDto> data) {
 		super();
 		this.status = status;
-		this.customerListDtos = customerListDtos;
+		this.data = data;
 	}
 
 	public CustomerListResponse() {
@@ -34,7 +34,7 @@ public class CustomerListResponse {
 	
 	@Override
 	public String toString() {
-		return "Response [status=" + status + ", data=" + customerListDtos + "]";
+		return "Response [status=" + status + ", data=" + data + "]";
 	}
 
 }

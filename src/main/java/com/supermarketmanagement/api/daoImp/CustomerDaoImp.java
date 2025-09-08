@@ -5,20 +5,16 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-
-import com.supermarketmanagement.api.Model.Custom.Response;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
-import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListResponse;
-import com.supermarketmanagement.api.Model.Custom.Customer.CustomerMessageDto;
 import com.supermarketmanagement.api.Model.Entity.CustomerModel;
 import com.supermarketmanagement.api.Repository.CustomerRepoistory;
-import com.supermarketmanagement.api.Util.WebServiceUtil;
 import com.supermarketmanagement.api.dao.CustomerDao;
-
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 
@@ -47,9 +43,7 @@ public class CustomerDaoImp implements CustomerDao{
 			    root.get("customerLocation"),
 			    root.get("customerCity"),
 			    root.get("customerPincode"),
-			    root.get("customerEmail"),
-			    root.get("customerCreatedDate"),
-			    root.get("customerUpdatedDate")
+			    root.get("customerEmail")
 			).where(root.get("customerLastEffectiveDate").isNull());
 		return entityManager.createQuery(criteriaQuery).getResultList();	
 		
@@ -58,7 +52,7 @@ public class CustomerDaoImp implements CustomerDao{
 
 	@Override
 	public CustomerModel findByCustomerId(Long customerId) {
-		return customerRepoistory.getById(customerId);
+		return customerRepoistory.findByCustomerId(customerId);
 	}
 
 
@@ -66,7 +60,31 @@ public class CustomerDaoImp implements CustomerDao{
 	public void saveCustomer(CustomerModel entity) {
 		customerRepoistory.save(entity);
 	}
-	
-	
 
+
+	@Override
+	public CustomerListDto findCustomerDetailsById(Long id) {
+		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+		CriteriaQuery<CustomerListDto> criteriaQuery = cb.createQuery(CustomerListDto.class);
+		
+		Root<CustomerModel> root = criteriaQuery.from(CustomerModel.class);
+		Predicate lastEffective = root.get("customerLastEffectiveDate").isNull();
+		Predicate customerid = cb.equal(root.get("customerId"),id);
+
+		criteriaQuery.multiselect(
+			    root.get("customerId"),
+			    root.get("customerName"),
+			    root.get("customerMobileno"),
+			    root.get("customerAddress"),
+			    root.get("customerLocation"),
+			    root.get("customerCity"),
+			    root.get("customerPincode"),
+			    root.get("customerEmail")
+			).where(cb.and(lastEffective,customerid));
+		try {
+	        return entityManager.createQuery(criteriaQuery).getSingleResult();
+	    } catch (NoResultException e) {
+	        return null; 
+	    }
+	}
 }

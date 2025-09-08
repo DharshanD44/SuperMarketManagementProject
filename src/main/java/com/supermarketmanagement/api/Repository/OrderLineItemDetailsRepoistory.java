@@ -14,4 +14,6 @@ public interface OrderLineItemDetailsRepoistory extends  JpaRepository<OrderLine
 	
     Optional<OrderLineItemDetailsModel> findByOrder_OrderIdAndProduct_ProductId(Long orderId, Long productId);
 
+	OrderLineItemDetailsModel findByOrderLineId(Long orderLineId);
+
 }

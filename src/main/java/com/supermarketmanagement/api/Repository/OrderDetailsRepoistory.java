@@ -10,5 +10,6 @@ import com.supermarketmanagement.api.Model.Entity.OrderDetailsModel;
 @Repository
 public interface OrderDetailsRepoistory extends JpaRepository<OrderDetailsModel, Long>{
 
+	OrderDetailsModel findOrderByOrderId(Long id);
 	
 }

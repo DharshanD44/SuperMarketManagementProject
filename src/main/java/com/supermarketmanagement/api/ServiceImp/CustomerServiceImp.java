@@ -1,6 +1,7 @@
 package com.supermarketmanagement.api.ServiceImp;
 
-import com.supermarketmanagement.api.Model.Custom.Response;
+import com.supermarketmanagement.api.Model.Custom.ResponseData;
+import com.supermarketmanagement.api.Model.Custom.ResponseMessage;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListResponse;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerMessageDto;
@@ -28,17 +29,16 @@ public class CustomerServiceImp implements CustomerService{
 	@Override
 	public CustomerListResponse getAllCustomerDetails() {
 		CustomerListResponse customerListResponse = new CustomerListResponse();
-		customerDao.getCustomerListDtos();
 		customerListResponse.setStatus(WebServiceUtil.SUCCESS_STATUS);
-		customerListResponse.setCustomerListDtos(customerDao.getCustomerListDtos());
+		customerListResponse.setData(customerDao.getCustomerListDtos());
 		return customerListResponse;
 	}
 
 	@Override
-	public Response addorUpdateCustomerDetails(CustomerListDto customerListDto) {
+	public ResponseMessage addorUpdateCustomerDetails(CustomerListDto customerListDto) {
 		
 		CustomerModel entity;
-		Response response= new Response();
+		ResponseMessage response= new ResponseMessage();
 		if(customerListDto.getCustomerId() == null)
 		{
 			entity = new CustomerModel();
@@ -50,7 +50,7 @@ public class CustomerServiceImp implements CustomerService{
 			if(entity==null)
 			{
 				response.setStatus(WebServiceUtil.FAILED_STATUS);
-				response.setData(CustomerMessageDto.CUSTOMER_NOT_FOUND);
+				response.setMessage(WebServiceUtil.CUSTOMER_NOT_FOUND);
 				return response;
 			}
 			entity.setCustomerUpdatedDate(LocalDateTime.now());
@@ -65,17 +65,59 @@ public class CustomerServiceImp implements CustomerService{
 		
 		customerDao.saveCustomer(entity);
 //		entity.setCustomerUpdatedDate(customerListDto.getCustomerUpdatedDate());
-		response.setStatus(WebServiceUtil.SUCCESS_STATUS);
-		response.setData(CustomerMessageDto.CUSTOMER_UPDATED);
-		return response;
+		if(customerListDto.getCustomerId() == null) {
+			response.setStatus(WebServiceUtil.SUCCESS_STATUS);
+			response.setMessage(WebServiceUtil.CUSTOMER_ADDED);
+			return response;	
+		}
+		else
+		{
+			response.setStatus(WebServiceUtil.SUCCESS_STATUS);
+			response.setMessage(WebServiceUtil.CANT_UPDATE_ORDER );
+			return response;	
+		}
 		
 	}
 
 	@Override
-	public String deleteCustomerById(Long id) {
+	public ResponseMessage deleteCustomerById(Long id) {
 		CustomerModel customerModel = customerDao.findByCustomerId(id);
-		customerModel.setCustomerLastEffectiveDate(LocalDateTime.now());
-		return CustomerMessageDto.CUSTOMER_DELETED;
+		ResponseMessage response= new ResponseMessage();
+		if(customerModel == null)
+		{
+			response.setStatus(WebServiceUtil.FAILED_STATUS);
+			response.setMessage(WebServiceUtil.CUSTOMER_NOT_FOUND);
+			return response;
+		}
+		else
+		{
+			customerModel.setCustomerLastEffectiveDate(LocalDateTime.now());
+			customerModel.setCustomerUpdatedDate(LocalDateTime.now());
+			response.setStatus(WebServiceUtil.SUCCESS_STATUS);
+			response.setMessage(WebServiceUtil.CUSTOMER_DELETED);
+			return response;
+		}
+		
+	}
+
+	@Override
+	public Object findCustomerDetailsById(Long id) {
+		CustomerListDto customerListDto = customerDao.findCustomerDetailsById(id);
+		if(customerListDto==null)
+		{
+			ResponseMessage message = new ResponseMessage();
+			message.setMessage(WebServiceUtil.CUSTOMER_NOT_FOUND+" "+id);
+			message.setStatus(WebServiceUtil.FAILED_STATUS);
+			return message;
+		}
+		else
+		{
+			ResponseData data = new ResponseData();
+			data.setData(customerListDto);
+			data.setStatus(WebServiceUtil.SUCCESS_STATUS);
+			return data;
+		}
+		
 	}
 
 }

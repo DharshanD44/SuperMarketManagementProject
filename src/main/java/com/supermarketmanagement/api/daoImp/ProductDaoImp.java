@@ -16,8 +16,6 @@ import com.supermarketmanagement.api.Model.Custom.Product.ActiveProductsListDto;
 import com.supermarketmanagement.api.Model.Custom.Product.InactiveProductListDto;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductListDto;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductListRequestModel;
-import com.supermarketmanagement.api.Model.Custom.Product.ProductPagination;
-import com.supermarketmanagement.api.Model.Custom.Product.ProductPagination.ProductFilter;
 import com.supermarketmanagement.api.Model.Entity.ProductModel;
 import com.supermarketmanagement.api.Repository.ProductRepository;
 import com.supermarketmanagement.api.Util.WebServiceUtil;
@@ -42,22 +40,6 @@ public class ProductDaoImp implements ProductDao {
 	@Autowired
 	private ProductRepository productRepository;
 
-//	@Override
-//	public List<ProductListDto> getAllProductDetails() {
-//		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-//		CriteriaQuery<ProductListDto> criteriaQuery = cb.createQuery(ProductListDto.class);
-//
-//		Root<ProductModel> root = criteriaQuery.from(ProductModel.class);
-//		criteriaQuery
-//				.multiselect(root.get("productId"), root.get("productName"), root.get("productPackageType"),
-//						root.get("productPackQuantity"), root.get("productPackageUnitOfMeasure"),
-//						root.get("productPrice"), root.get("productCurrentStockPackageCount"),
-//						root.get("productEffectiveDate"), root.get("productLastEffectiveDate"),
-//						root.get("oldProductId"), root.get("productCreatedDate"), root.get("productUpdatedtedDate"))
-//				.where(cb.isFalse(root.get("isDeleted")));
-//		return entityManager.createQuery(criteriaQuery).getResultList();
-//	}
-
 	@Override
 	public ProductModel getProductDetailsById(int id) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
@@ -68,7 +50,7 @@ public class ProductDaoImp implements ProductDao {
 		try {
 			return entityManager.createQuery(criteriaQuery).getSingleResult();
 		} catch (NoResultException e) {
-			throw new ProductNotFoundException(LocalDateTime.now(),e.getMessage(),"Product not Found!");
+			return null;
 		}
 	}
 
@@ -81,11 +63,16 @@ public class ProductDaoImp implements ProductDao {
 		Predicate predicate = cb.lessThanOrEqualTo(root.get("productEffectiveDate"), date);
 		Predicate predicate1 = cb.or(cb.isNull(root.get("productLastEffectiveDate")),
 				cb.greaterThanOrEqualTo(root.get("productLastEffectiveDate"), date));
-		criteriaQuery.select(cb.construct(ActiveProductsListDto.class, root.get("productId"), root.get("productName"),
-				root.get("productPackageType"), root.get("productPackQuantity"),
-				root.get("productPackageUnitOfMeasure"), root.get("productPrice"),
-				root.get("productCurrentStockPackageCount"), root.get("productEffectiveDate"),
-				root.get("productCreatedDate"))).where(cb.and(predicate, predicate1));
+		criteriaQuery.select(
+				cb.construct(ActiveProductsListDto.class, 
+				root.get("productId"), 
+				root.get("productName"),
+				root.get("productPackageType"), 
+				root.get("productPackQuantity"),
+				root.get("productPackageUnitOfMeasure"), 
+				root.get("productPrice"),
+				root.get("productCurrentStockPackageCount"), 
+				root.get("productEffectiveDate"))).where(cb.and(predicate, predicate1));
 
 		return entityManager.createQuery(criteriaQuery).getResultList();
 	}
@@ -100,16 +87,10 @@ public class ProductDaoImp implements ProductDao {
 		Predicate ExpiredPredicate = cb.and(cb.isNotNull(root.get("productLastEffectiveDate")),
 				cb.lessThan(root.get("productLastEffectiveDate"), date));
 
-		criteriaQuery.select(
-				cb.construct(InactiveProductListDto.class, 
-				root.get("productId"),
-				root.get("productName"),
-				root.get("productPackageType"), 
-				root.get("productPackQuantity"),
-				root.get("productPackageUnitOfMeasure"),
-				root.get("productPrice"),
-				root.get("productCurrentStockPackageCount"), 
-				root.get("productCreatedDate"),
+		criteriaQuery.select(cb.construct(InactiveProductListDto.class, root.get("productId"), root.get("productName"),
+				root.get("productPackageType"), root.get("productPackQuantity"),
+				root.get("productPackageUnitOfMeasure"), root.get("productPrice"),
+				root.get("productCurrentStockPackageCount"),
 				root.get("productLastEffectiveDate"))).where(ExpiredPredicate);
 
 		return entityManager.createQuery(criteriaQuery).getResultList();
@@ -122,8 +103,8 @@ public class ProductDaoImp implements ProductDao {
 	}
 
 	@Override
-	public Optional<ProductModel> findByProductId(Long productId) {
-		return productRepository.findById(productId);
+	public ProductModel findByProductId(Long productId) {
+		return productRepository.findByProductId(productId);
 	}
 
 	@Override
@@ -135,27 +116,19 @@ public class ProductDaoImp implements ProductDao {
 		CriteriaQuery<ProductListDto> cq = cb.createQuery(ProductListDto.class);
 		Root<ProductModel> root = cq.from(ProductModel.class);
 
-		cq.multiselect(root.get("productId"), 
-				root.get("productName"),
-				root.get("productPackageType"),
-				root.get("productPackQuantity"), 
-				root.get("productPackageUnitOfMeasure"), 
-				root.get("productPrice"),
-				root.get("productCurrentStockPackageCount"), 
-				root.get("productEffectiveDate"),
-				root.get("productLastEffectiveDate"), 
-				root.get("oldProductId"), 
-				root.get("productCreatedDate"),
-				root.get("productUpdatedtedDate"));
+		cq.multiselect(root.get("productId"), root.get("productName"), root.get("productPackageType"),
+				root.get("productPackQuantity"), root.get("productPackageUnitOfMeasure"), root.get("productPrice"),
+				root.get("productCurrentStockPackageCount"), root.get("productEffectiveDate"),
+				root.get("productLastEffectiveDate"));
 
 		List<Predicate> predicates = buildPredicates(cb, root, requestModel);
 		cq.where(cb.and(predicates.toArray(new Predicate[0])));
 
 		TypedQuery<ProductListDto> query = entityManager.createQuery(cq);
 
-		if (requestModel.getPagination() != null) {
-			query.setFirstResult(requestModel.getPagination().getStart());
-			query.setMaxResults(requestModel.getPagination().getLength());
+		if (requestModel.getStart() != null && requestModel.getLength() != null) {
+			query.setFirstResult(requestModel.getStart());
+			query.setMaxResults(requestModel.getLength());
 		}
 
 		return query.getResultList();
@@ -183,12 +156,12 @@ public class ProductDaoImp implements ProductDao {
 
 	private List<Predicate> buildPredicates(CriteriaBuilder cb, Root<ProductModel> root,
 			ProductListRequestModel requestModel) {
-		
+
 		List<Predicate> predicates = new ArrayList<>();
 
 		predicates.add(cb.isFalse(root.get("isDeleted")));
 
-		ProductPagination.ProductFilter filter = requestModel.getFilter();
+		ProductListRequestModel.ProductFilter filter = requestModel.getFilter();
 		if (filter != null) {
 			Predicate pricePredicate = null;
 			Predicate quantityPredicate = null;

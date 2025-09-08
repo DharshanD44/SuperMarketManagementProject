@@ -1,37 +1,72 @@
 package com.supermarketmanagement.api.Model.Custom.Product;
 
 public class ProductListRequestModel {
-	
-	private ProductPagination pagination;
-    private ProductPagination.ProductFilter filter;
-    private String search;
-    private String searchColumn;
 
-    public ProductPagination getPagination() {
-        return pagination;
-    }
-    public void setPagination(ProductPagination pagination) {
-        this.pagination = pagination;
-    }
+	private Integer start = 0;
+	private Integer length = 10;
+	private String search;
+	private String searchColumn;
+    private ProductFilter filter;
+    
+	public static class ProductFilter {
+		private Double price;
+		private Integer productPackQuantity;
 
-    public ProductPagination.ProductFilter getFilter() {
-        return filter;
-    }
-    public void setFilter(ProductPagination.ProductFilter filter) {
-        this.filter = filter;
-    }
+		public Double getPrice() {
+			return price;
+		}
 
-    public String getSearch() {
-        return search;
-    }
-    public void setSearch(String search) {
-        this.search = search;
-    }
+		public void setPrice(Double price) {
+			this.price = price;
+		}
 
-    public String getSearchColumn() {
-        return searchColumn;
-    }
-    public void setSearchColumn(String searchColumn) {
-        this.searchColumn = searchColumn;
-    }
+		public Integer getProductPackQuantity() {
+			return productPackQuantity;
+		}
+
+		public void setProductPackQuantity(Integer productPackQuantity) {
+			this.productPackQuantity = productPackQuantity;
+		}
+
+	}
+
+	public Integer getStart() {
+		return start;
+	}
+
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	public Integer getLength() {
+		return length;
+	}
+
+	public void setLength(Integer length) {
+		this.length = length;
+	}
+
+	public String getSearch() {
+		return search;
+	}
+
+	public void setSearch(String search) {
+		this.search = search;
+	}
+
+	public String getSearchColumn() {
+		return searchColumn;
+	}
+
+	public void setSearchColumn(String searchColumn) {
+		this.searchColumn = searchColumn;
+	}
+
+	public ProductFilter getFilter() {
+		return filter;
+	}
+
+	public void setFilter(ProductFilter filter) {
+		this.filter = filter;
+	}	
 }

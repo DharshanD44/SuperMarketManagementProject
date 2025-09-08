@@ -13,17 +13,13 @@ public class ProductListDto {
 	private Integer productCurrentStockPackageCount;
 	private LocalDateTime productEffectiveDate;
 	private LocalDateTime productLastEffectiveDate;
-	private Long oldProductId;
-	private LocalDateTime productCreatedDate;
-	private LocalDateTime productUpdatedtedDate;
 
 	public ProductListDto() {
 	}
 
 	public ProductListDto(Long productId, String productName, String productPackageType, Integer productPackQuantity,
 			String productPackageUnitOfMeasure, Double productPrice, Integer productCurrentStockPackageCount,
-			LocalDateTime productEffectiveDate, LocalDateTime productLastEffectiveDate, Long oldProductId,
-			LocalDateTime productCreatedDate, LocalDateTime productUpdatedtedDate) {
+			LocalDateTime productEffectiveDate, LocalDateTime productLastEffectiveDate) {
 		this.productId = productId;
 		this.productName = productName;
 		this.productPackageType = productPackageType;
@@ -33,14 +29,11 @@ public class ProductListDto {
 		this.productCurrentStockPackageCount = productCurrentStockPackageCount;
 		this.productEffectiveDate = productEffectiveDate;
 		this.productLastEffectiveDate = productLastEffectiveDate;
-		this.oldProductId = oldProductId;
-		this.productCreatedDate = productCreatedDate;
-		this.productUpdatedtedDate = productUpdatedtedDate;
 	}
 
 	public ProductListDto(Long productId, String productName, String productPackageType, Integer productPackQuantity,
 			String productPackageUnitOfMeasure, Double productPrice, Integer productCurrentStockPackageCount,
-			LocalDateTime productEffectiveDate, LocalDateTime productCreatedDate) {
+			LocalDateTime productEffectiveDate) {
 		this.productId = productId;
 		this.productName = productName;
 		this.productPackageType = productPackageType;
@@ -49,7 +42,6 @@ public class ProductListDto {
 		this.productPrice = productPrice;
 		this.productCurrentStockPackageCount = productCurrentStockPackageCount;
 		this.productEffectiveDate = productEffectiveDate;
-		this.productCreatedDate = productCreatedDate;
 	}
 
 	public Long getProductId() {
@@ -124,27 +116,4 @@ public class ProductListDto {
 		this.productLastEffectiveDate = productLastEffectiveDate;
 	}
 
-	public Long getOldProductId() {
-		return oldProductId;
-	}
-
-	public void setOldProductId(Long oldProductId) {
-		this.oldProductId = oldProductId;
-	}
-
-	public LocalDateTime getProductCreatedDate() {
-		return productCreatedDate;
-	}
-
-	public void setProductCreatedDate(LocalDateTime productCreatedDate) {
-		this.productCreatedDate = productCreatedDate;
-	}
-
-	public LocalDateTime getProductUpdatedtedDate() {
-		return productUpdatedtedDate;
-	}
-
-	public void setProductUpdatedtedDate(LocalDateTime productUpdatedtedDate) {
-		this.productUpdatedtedDate = productUpdatedtedDate;
-	}
 }

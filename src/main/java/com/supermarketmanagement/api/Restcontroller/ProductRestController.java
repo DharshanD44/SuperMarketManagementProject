@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.supermarketmanagement.api.Model.Custom.CommonListResponse;
 import com.supermarketmanagement.api.Model.Custom.Product.ActiveProductsListDto;
 import com.supermarketmanagement.api.Model.Custom.Product.InactiveProductListDto;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductListDto;
@@ -51,9 +52,8 @@ public class ProductRestController {
     }
 	
 	@GetMapping("/view/id/{id}")
-	public ResponseEntity<ProductModel> getProductDetailsById(@PathVariable int id){
-		ProductModel product = productService.getProductDetailsById(id);
-	    return ResponseEntity.ok(product);
+	public ResponseEntity<?> getProductDetailsById(@PathVariable int id){
+	    return ResponseEntity.ok(productService.getProductDetailsById(id));
 	}
 	
 	@GetMapping("/view/active")
@@ -82,9 +82,9 @@ public class ProductRestController {
 	
 	
 	@GetMapping("/pricehistory/id/{id}")
-	public ResponseEntity<List<ProductPriceHistoryDto>> getProductPriceHistoryById(@PathVariable Long id){
+	public ResponseEntity<CommonListResponse<?>> getProductPriceHistoryById(@PathVariable Long id){
 		
-		return new ResponseEntity<List<ProductPriceHistoryDto>>(productService.getProductPriceHistoryById(id),HttpStatus.OK);	
+		return new ResponseEntity<CommonListResponse<?>>(productService.getProductPriceHistoryById(id),HttpStatus.OK);	
 	}
 	
 	

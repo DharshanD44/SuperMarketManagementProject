@@ -26,7 +26,7 @@ public interface ProductDao {
 
 	Object addProductDetails(ProductModel productModel);
 
-	Optional<ProductModel> findByProductId(Long productId);
+	ProductModel findByProductId(Long productId);
 
 	Object saveProduct(ProductModel newProduct);
 

@@ -1,6 +1,7 @@
 package com.supermarketmanagement.api.Service;
 
-import com.supermarketmanagement.api.Model.Custom.Response;
+import com.supermarketmanagement.api.Model.Custom.ResponseData;
+import com.supermarketmanagement.api.Model.Custom.ResponseMessage;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListResponse;
 import com.supermarketmanagement.api.Model.Entity.CustomerModel;
@@ -12,7 +13,9 @@ public interface CustomerService {
 
 	CustomerListResponse getAllCustomerDetails();
 
-	Response addorUpdateCustomerDetails(CustomerListDto customerListDto);
+	ResponseMessage addorUpdateCustomerDetails(CustomerListDto customerListDto);
 
-	String deleteCustomerById(Long id);
+	ResponseMessage deleteCustomerById(Long id);
+
+	Object findCustomerDetailsById(Long id);
 }

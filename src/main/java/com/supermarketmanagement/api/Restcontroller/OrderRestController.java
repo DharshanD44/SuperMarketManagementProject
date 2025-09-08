@@ -14,56 +14,35 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.amazonaws.Response;
 import com.bandwidth.http.response.ApiResponse;
+import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderDetailsListDto;
+import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderListResponse;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderMessageDto;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderRequestDto;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderUpdateRequestDto;
 import com.supermarketmanagement.api.Model.Entity.OrderDetailsModel;
 import com.supermarketmanagement.api.Service.OrderDetailsService;
+import com.supermarketmanagement.api.Service.OrderService;
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/orders")
 public class OrderRestController {
 	
 	@Autowired
-	private OrderDetailsService detailsService;
-	
+	private OrderService orderService;
 	
 	@PostMapping("/placeOrder")
 	public ResponseEntity<?> placeOrder(@RequestBody OrderRequestDto requestDto)
 	{
-		Object result = detailsService.placeOrder(requestDto);
-
-	    if (result instanceof String) {
-	        return ResponseEntity.badRequest().body(result);
-	    }
-
-	    return ResponseEntity.ok(OrderMessageDto.ORDER_PLACED);
+		Object result = orderService.placeOrder(requestDto);
+	    return ResponseEntity.ok(result);
 	}
 
 	@PostMapping("/placedOrder/update")
 	public ResponseEntity<?> updatePlacedOrder(@RequestBody OrderUpdateRequestDto updaterequestDto)
 	{
-		Object response = detailsService.updatePlacedOrder(updaterequestDto);
+		Object response = orderService.updatePlacedOrder(updaterequestDto);
 		
-		if(response instanceof String) {
-	        return ResponseEntity.badRequest().body(response);
-
-		}
-		return ResponseEntity.ok(OrderMessageDto.UPDATE_PLACED_ORDER);
+		return ResponseEntity.ok(response);
 	}
 	
-	@PostMapping("/orderStatus/{status}/{id}")
-	public ResponseEntity<?> updateOrderStatus(@PathVariable String status,@PathVariable Long id){
-		return ResponseEntity.ok(detailsService.updateOrderStatus(status,id));
-		}
-	
-	@PostMapping("/orderLineStatus/{status}")
-	public ResponseEntity<?> updateOrderLineStatus(@PathVariable String status,@RequestBody List<Long> id){
-		return ResponseEntity.ok(detailsService.updateLineOrderLineStatus(status,id));
-		}
-	
-	@GetMapping("list/id/{orderid}")
-	public ResponseEntity<?> getOrderDetailsById(@PathVariable Long orderid){
-		return new ResponseEntity<>(detailsService.getOrderDetailsById(orderid),HttpStatus.BAD_REQUEST);
-	}
 }

@@ -12,12 +12,10 @@ public class ActiveProductsListDto {
 	private Double productPrice;
 	private Integer productCurrentStockPackageCount;
 	private LocalDateTime productEffectiveDate;
-	private LocalDateTime productCreatedDate;
 
 	public ActiveProductsListDto(Long productId, String productName, String productPackageType,
 			Integer productPackQuantity, String productPackageUnitOfMeasure, Double productPrice,
-			Integer productCurrentStockPackageCount, LocalDateTime productEffectiveDate,
-			LocalDateTime productCreatedDate) {
+			Integer productCurrentStockPackageCount, LocalDateTime productEffectiveDate) {
 		this.productId = productId;
 		this.productName = productName;
 		this.productPackageType = productPackageType;
@@ -26,8 +24,7 @@ public class ActiveProductsListDto {
 		this.productPrice = productPrice;
 		this.productCurrentStockPackageCount = productCurrentStockPackageCount;
 		this.productEffectiveDate = productEffectiveDate;
-		this.productCreatedDate = productCreatedDate;
-	}
+		}
 
 	public Long getProductId() {
 		return productId;
@@ -91,14 +88,6 @@ public class ActiveProductsListDto {
 
 	public void setProductEffectiveDate(LocalDateTime productEffectiveDate) {
 		this.productEffectiveDate = productEffectiveDate;
-	}
-
-	public LocalDateTime getProductCreatedDate() {
-		return productCreatedDate;
-	}
-
-	public void setProductCreatedDate(LocalDateTime productCreatedDate) {
-		this.productCreatedDate = productCreatedDate;
 	}
 
 }

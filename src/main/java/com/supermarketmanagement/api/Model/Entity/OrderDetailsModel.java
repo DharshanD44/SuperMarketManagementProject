@@ -1,5 +1,6 @@
 package com.supermarketmanagement.api.Model.Entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -36,16 +37,8 @@ public class OrderDetailsModel {
     @JoinColumn(name = "customer_id", nullable = false)  
     private CustomerModel customer;
 
-    public float getTotalprice() {
-		return totalprice;
-	}
-
-	public void setTotalprice(float totalprice) {
-		this.totalprice = totalprice;
-	}
-
 	@Column(name = "order_expected_date")
-    private LocalDateTime orderExpectedDate;
+    private LocalDate orderExpectedDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "order_status", nullable = false)
@@ -63,6 +56,14 @@ public class OrderDetailsModel {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderLineItemDetailsModel> lineItemDetailsModels = new ArrayList<>();
 
+    
+    public float getTotalprice() {
+		return totalprice;
+	}
+
+	public void setTotalprice(float totalprice) {
+		this.totalprice = totalprice;
+	}
 
 	public Long getOrderId() {
 		return orderId;
@@ -92,12 +93,12 @@ public class OrderDetailsModel {
 	}
 
 
-	public LocalDateTime getOrderExpectedDate() {
+	public LocalDate getOrderExpectedDate() {
 		return orderExpectedDate;
 	}
 
 
-	public void setOrderExpectedDate(LocalDateTime orderExpectedDate) {
+	public void setOrderExpectedDate(LocalDate orderExpectedDate) {
 		this.orderExpectedDate = orderExpectedDate;
 	}
 
@@ -141,7 +142,7 @@ public class OrderDetailsModel {
 		this.lineItemDetailsModels = lineItemDetailsModels;
 	}
 
-	public OrderDetailsModel(LocalDateTime orderDate, CustomerModel customer, LocalDateTime orderExpectedDate,
+	public OrderDetailsModel(LocalDateTime orderDate, CustomerModel customer, LocalDate orderExpectedDate,
 			OrderStatusDto orderStatus, LocalDateTime createdDate, LocalDateTime updateDate, float totalprice,
 			List<OrderLineItemDetailsModel> lineItemDetailsModels) {
 		super();

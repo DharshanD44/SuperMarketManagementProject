@@ -7,7 +7,7 @@ import com.supermarketmanagement.api.Model.Entity.CustomerModel;
 
 @Repository
 public interface CustomerRepoistory extends JpaRepository<CustomerModel, Long>{
-	
-	
+
+	CustomerModel findByCustomerId(Long customerId);
 
 }

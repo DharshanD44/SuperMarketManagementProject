@@ -18,20 +18,7 @@ public class CustomerListDto {
 	private String customerCity;
 	private String customerPincode;
 	private String customerEmail;
-	private LocalDateTime customerCreatedDate;
-	private LocalDateTime customerLastEffectiveDate;
 
-//	@JsonSerialize(using = LocalDateTimeSerializer.class)
-//	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
-	private LocalDateTime customerUpdatedDate;
-
-	public LocalDateTime getCustomerUpdatedDate() {
-		return customerUpdatedDate;
-	}
-
-	public void setCustomerUpdatedDate(LocalDateTime customerUpdatedDate) {
-		this.customerUpdatedDate = customerUpdatedDate;
-	}
 
 	public Long getCustomerId() {
 		return customerId;
@@ -97,25 +84,8 @@ public class CustomerListDto {
 		this.customerEmail = customerEmail;
 	}
 
-	public LocalDateTime getCustomerCreatedDate() {
-		return customerCreatedDate;
-	}
-
-	public void setCustomerCreatedDate(LocalDateTime customerCreatedDate) {
-		this.customerCreatedDate = customerCreatedDate;
-	}
-
-	public LocalDateTime getCustomerLastEffectiveDate() {
-		return customerLastEffectiveDate;
-	}
-
-	public void setCustomerLastEffectiveDate(LocalDateTime customerLastEffectiveDate) {
-		this.customerLastEffectiveDate = customerLastEffectiveDate;
-	}
-
 	public CustomerListDto(Long customerId, String customerName, String customerMobileno, String customerAddress,
-			String customerLocation, String customerCity, String customerPincode, String customerEmail,
-			LocalDateTime customerCreatedDate, LocalDateTime customerUpdatedDate) {
+			String customerLocation, String customerCity, String customerPincode, String customerEmail) {
 		this.customerId = customerId;
 		this.customerName = customerName;
 		this.customerMobileno = customerMobileno;
@@ -124,8 +94,6 @@ public class CustomerListDto {
 		this.customerCity = customerCity;
 		this.customerPincode = customerPincode;
 		this.customerEmail = customerEmail;
-		this.customerCreatedDate = customerCreatedDate;
-		this.customerUpdatedDate = customerUpdatedDate;
 	}
 
 	public CustomerListDto() {

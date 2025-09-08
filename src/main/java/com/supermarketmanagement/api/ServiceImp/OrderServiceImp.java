@@ -1,12 +1,17 @@
 package com.supermarketmanagement.api.ServiceImp;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.supermarketmanagement.api.Model.Custom.ResponseData;
+import com.supermarketmanagement.api.Model.Custom.ResponseMessage;
+import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderDetailsListDto;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderLineItemsDto;
+import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderListResponse;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderMessageDto;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderRequestDto;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderStatusDto;
@@ -17,26 +22,40 @@ import com.supermarketmanagement.api.Model.Entity.OrderDetailsModel;
 import com.supermarketmanagement.api.Model.Entity.OrderLineItemDetailsModel;
 import com.supermarketmanagement.api.Model.Entity.ProductModel;
 import com.supermarketmanagement.api.Service.OrderDetailsService;
+import com.supermarketmanagement.api.Service.OrderService;
+import com.supermarketmanagement.api.Util.WebServiceUtil;
+import com.supermarketmanagement.api.dao.CustomerDao;
 import com.supermarketmanagement.api.dao.OrderDetailsDao;
+import com.supermarketmanagement.api.dao.OrderLineDetailsDao;
+import com.supermarketmanagement.api.dao.ProductDao;
 
 import jakarta.transaction.Transactional;
 
 @Service
 @Transactional
-public class OrderServiceImp implements OrderDetailsService {
+public class OrderServiceImp implements OrderService {
 
 	@Autowired
 	private OrderDetailsDao orderdetailsDao;
+	
+	@Autowired
+	private OrderLineDetailsDao orderLineDetailsDao;
+	
+	@Autowired
+	private CustomerDao customerDao;
+	
+	@Autowired
+	private ProductDao productDao;
 
 	@Override
-	public Object placeOrder(OrderRequestDto requestDto) {
+	public ResponseMessage placeOrder(OrderRequestDto requestDto) {
 
-		CustomerModel customerModel = orderdetailsDao.findByCustomerId(requestDto.getCustomerId());
-
+		CustomerModel customerModel = customerDao.findByCustomerId(requestDto.getCustomerId());
+		ResponseMessage response = new ResponseMessage();
 		float totalPrice = 0;
 		OrderDetailsModel orderDetailsDao = new OrderDetailsModel();
 		orderDetailsDao.setCustomer(customerModel);
-		orderDetailsDao.setOrderExpectedDate(LocalDateTime.now().plusDays(2));
+		orderDetailsDao.setOrderExpectedDate(LocalDate.now().plusDays(2));
 		orderDetailsDao.setOrderDate(LocalDateTime.now());
 		orderDetailsDao.setCreatedDate(LocalDateTime.now());
 
@@ -44,7 +63,7 @@ public class OrderServiceImp implements OrderDetailsService {
 
 			float individualPrice = 0;
 
-			ProductModel productModel = orderdetailsDao.findByProductId(itemsDto.getProductId());
+			ProductModel productModel = productDao.findByProductId(itemsDto.getProductId());
 			Integer packageSize = productModel.getProductPackQuantity();
 
 			Integer requestUnits = itemsDto.getOrderQuantityIndividualUnit();
@@ -68,33 +87,45 @@ public class OrderServiceImp implements OrderDetailsService {
 				orderDetailsDao.getLineItemDetailsModels().add(itemDetailsModel1);
 				productModel.setProductCurrentStockPackageCount(productModel.getProductCurrentStockPackageCount() - requiredPackage);
 			} else {
-				return OrderMessageDto.ORDER_QUANTITY_OUT_OF_STOCK + productModel.getProductName();
+				response.setStatus(WebServiceUtil.FAILED_STATUS);
+				response.setMessage(WebServiceUtil.ORDER_QUANTITY_OUT_OF_STOCK+" "+ productModel.getProductName());
+				return response;
 			}
 		}
 		orderDetailsDao.setTotalprice(totalPrice);
-		return orderdetailsDao.saveOrderDetails(orderDetailsDao);
+		response.setStatus(WebServiceUtil.SUCCESS_STATUS);
+		response.setMessage(WebServiceUtil.ORDER_PLACED);
+		orderdetailsDao.saveOrderDetails(orderDetailsDao);
+		return response;
 	}
 
 	@Override
-	public Object updatePlacedOrder(OrderUpdateRequestDto updaterequestDto) {
+	public ResponseMessage updatePlacedOrder(OrderUpdateRequestDto updaterequestDto) {
 		OrderDetailsModel detailsModel = orderdetailsDao.findByOrderId(updaterequestDto.getOrderId());
+		ResponseMessage response = new ResponseMessage();
 		if (detailsModel.getOrderStatus() != OrderStatusDto.NEW) {
-			return OrderMessageDto.CANT_UPDATE_ORDER;
+			response.setStatus(WebServiceUtil.FAILED_STATUS);
+			response.setMessage(WebServiceUtil.CANT_UPDATE_ORDER);
+			return response;
 		}
 
 		for (UpdateOrderLineItemsDto items : updaterequestDto.getItems()) {
 
 			detailsModel.getLineItemDetailsModels();
-			OrderLineItemDetailsModel lineItem = orderdetailsDao.findByOrderLineId(items.getOrderLineId());
-			if (!lineItem.getOrder().getOrderId().equals(detailsModel.getOrderId())) {
-	            throw new RuntimeException("OrderLineItem " + items.getOrderLineId() + " does not belong to Order " + detailsModel.getOrderId());
+			OrderLineItemDetailsModel lineItem = orderLineDetailsDao.findByOrderLineId(items.getOrderLineId());
+			if (lineItem==null) {
+				response.setStatus(WebServiceUtil.FAILED_STATUS);
+				response.setMessage("OrderLineItem " + items.getOrderLineId() + " does not belong to Order " + detailsModel.getOrderId());
+				return response;
 	        }
 			
 			if (lineItem.getOrderLineItemStatus() == OrderStatusDto.PACKED) {
-				return lineItem.getProduct().getProductName() + " has been packed. Product can't be updated!";
+				response.setStatus(WebServiceUtil.FAILED_STATUS);
+				response.setMessage(lineItem.getProduct().getProductName()+" "+WebServiceUtil.CANT_UPDATE_ORDER);
+				return response;
 			}
 
-			ProductModel productModel = orderdetailsDao.findByProductId(lineItem.getProduct().getProductId());
+			ProductModel productModel = productDao.findByProductId(lineItem.getProduct().getProductId());
 			
 			Integer packageSize = productModel.getProductPackQuantity();
 
@@ -113,73 +144,9 @@ public class OrderServiceImp implements OrderDetailsService {
 			lineItem.setOrderQuantityIndividualUnit(adjustedUnits);
 		}
 		detailsModel.setUpdateDate(LocalDateTime.now());
-		return detailsModel;
+		response.setStatus(WebServiceUtil.SUCCESS_STATUS);
+		response.setMessage(WebServiceUtil.UPDATE_PLACED_ORDER);
+		return response;
 	}
-
-	@Override
-	public Object updateOrderStatus(String status, Long id) {
-
-		OrderDetailsModel orderDetailsModel = orderdetailsDao.findByOrderId(id);
-		switch (status.toUpperCase()) {
-		case "PACKED":
-			orderDetailsModel.setOrderStatus(OrderStatusDto.PACKED);
-			orderDetailsModel.setUpdateDate(LocalDateTime.now());
-			return OrderMessageDto.ORDER_STATUS_PACKED;
-		case "DELIVERED":
-			orderDetailsModel.setOrderStatus(OrderStatusDto.DELIVERED);
-			orderDetailsModel.setUpdateDate(LocalDateTime.now());
-			return OrderMessageDto.ORDER_STATUS_DELIVERED;
-		case "SHIPPED":
-			orderDetailsModel.setOrderStatus(OrderStatusDto.SHIPPED);
-			orderDetailsModel.setUpdateDate(LocalDateTime.now());
-			return OrderMessageDto.ORDER_STATUS_SHIPPED;
-		case "CANCELLED":
-			orderDetailsModel.setOrderStatus(OrderStatusDto.CANCELLED);
-			orderDetailsModel.setUpdateDate(LocalDateTime.now());
-			return OrderMessageDto.ORDER_STATUS_CANCELLED;
-		default:
-			return "INVALID ORDER STATUS!";
-		}
-	}
-
-	@Override
-	public Object updateLineOrderLineStatus(String status, List<Long> id) {
-		List<OrderLineItemDetailsModel> orderLineItemDetailsModel = orderdetailsDao.findByOrderLineId(id);
-
-		OrderStatusDto newStatus;
-		String message;
-
-		switch (status.toUpperCase()) {
-		case "PACKED":
-			newStatus = OrderStatusDto.PACKED;
-			message = OrderMessageDto.ORDER_STATUS_PACKED;
-			break;
-		case "DELIVERED":
-			newStatus = OrderStatusDto.DELIVERED;
-			message = OrderMessageDto.ORDER_STATUS_DELIVERED;
-			break;
-		case "SHIPPED":
-			newStatus = OrderStatusDto.SHIPPED;
-			message = OrderMessageDto.ORDER_STATUS_SHIPPED;
-			break;
-		case "CANCELLED":
-			newStatus = OrderStatusDto.CANCELLED;
-			message = OrderMessageDto.ORDER_STATUS_CANCELLED;
-			break;
-		default:
-			return "Invalid Status Provided!";
-		}
-
-		for (OrderLineItemDetailsModel items : orderLineItemDetailsModel) {
-			items.setOrderLineItemStatus(newStatus);
-			items.setUpdateDate(LocalDateTime.now());
-		}
-		return message;
-	}
-
-	@Override
-	public Object getOrderDetailsById(Long orderid) {
-		return orderdetailsDao.getOrderDetailsById(orderid);
-	}
-
+	
 }

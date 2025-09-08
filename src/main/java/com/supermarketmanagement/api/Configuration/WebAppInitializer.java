@@ -13,7 +13,7 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     // Servlet application context (Controllers, ViewResolvers)
     @Override
     protected Class<?>[] getServletConfigClasses() {
-        return new Class<?>[] { AppConfiguration.class };
+        return new Class<?>[] { SpringConfiguration.class };
         
     }
 

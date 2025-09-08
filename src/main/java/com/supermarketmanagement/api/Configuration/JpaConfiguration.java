@@ -1,4 +1,5 @@
 package com.supermarketmanagement.api.Configuration;
+
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -18,12 +19,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 @Configuration
-@EnableWebMvc
-@ComponentScan(basePackages = "com.supermarketmanagement.api")
+@ComponentScan(basePackages = "com.supermarketmanagement.api.Configuration")
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "com.supermarketmanagement.api.Repository")
-@EnableScheduling
-public class AppConfiguration {
+public class JpaConfiguration {
 	@Bean
     public DataSource dataSource() {
         DriverManagerDataSource ds = new DriverManagerDataSource();
@@ -56,23 +55,5 @@ public class AppConfiguration {
         txManager.setEntityManagerFactory(entityManagerFactory().getObject());
         return txManager;
     }
-    
-    @Bean
-    public JavaMailSender getJavaMailSender() {
-        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
+}	
 
-        mailSender.setUsername("dharshangk333@gmail.com"); // Replace with your email
-        mailSender.setPassword("oflirfteqcjweweq");    // Replace with your app password
-
-        Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true"); // Logs email sending in console
-
-        return mailSender;
-    }
-
-}

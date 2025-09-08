@@ -1,16 +1,15 @@
 package com.supermarketmanagement.api.Model.Custom;
 
-public class Response {
-
+public class ResponseData {
 	private String status;
-	
+
 	private Object data;
-	
-	public Response() {
+
+	public ResponseData() {
 		
 	}
-	
-	public Response(String status, Object data) {
+
+	public ResponseData(String status, Object data) {
 		this.status = status;
 		this.data = data;
 	}
@@ -31,10 +30,4 @@ public class Response {
 		this.data = data;
 	}
 
-	@Override
-	public String toString() {
-		return "Response [status=" + status + ", data=" + data + "]";
-	}
-	
 }
-

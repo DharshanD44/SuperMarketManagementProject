@@ -12,5 +12,7 @@ import com.supermarketmanagement.api.Model.Entity.ProductModel;
 public interface ProductRepository extends JpaRepository<ProductModel, Long>{
 
     List<ProductModel> findByProductCurrentStockPackageCount(Integer stockQuantity);
+    
+	ProductModel findByProductId(Long productId);
 
 }
