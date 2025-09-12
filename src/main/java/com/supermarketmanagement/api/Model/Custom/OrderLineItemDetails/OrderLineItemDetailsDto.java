@@ -6,27 +6,26 @@ import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderStatusDto;
 
 public class OrderLineItemDetailsDto {
 
-    private Long orderLineId;
-    private Long orderId;
-    private Long productId;
-    private Integer orderQuantityIndividualUnit;
-    private Integer orderQuantityInPackage;
-    private String status;
-    private LocalDateTime updateDate;
-    private float price;
+	private Long orderLineId;
+	private Long orderId;
+	private Long productId;
+	private Integer orderQuantityIndividualUnit;
+	private Integer orderQuantityInPackage;
+	private String status;
+	private LocalDateTime updateDate;
+	private float price;
 
-    public OrderLineItemDetailsDto(Long orderLineId, Long orderId, Long productId,
-                                   Integer orderQuantityIndividualUnit, Integer orderQuantityInPackage,
-                                   OrderStatusDto statusDto, LocalDateTime updateDate, float price) {
-        this.orderLineId = orderLineId;
-        this.orderId = orderId;
-        this.productId = productId;
-        this.orderQuantityIndividualUnit = orderQuantityIndividualUnit;
-        this.orderQuantityInPackage = orderQuantityInPackage;
-        this.status = statusDto != null ? statusDto.name() : null;  
-        this.updateDate = updateDate;
-        this.price = price;
-    }
+	public OrderLineItemDetailsDto(Long orderLineId, Long orderId, Long productId, Integer orderQuantityIndividualUnit,
+			Integer orderQuantityInPackage, String status, LocalDateTime updateDate, float price) {
+		this.orderLineId = orderLineId;
+		this.orderId = orderId;
+		this.productId = productId;
+		this.orderQuantityIndividualUnit = orderQuantityIndividualUnit;
+		this.orderQuantityInPackage = orderQuantityInPackage;
+		this.status = status;
+		this.updateDate = updateDate;
+		this.price = price;
+	}
 
 	public Long getOrderLineId() {
 		return orderLineId;
@@ -91,7 +90,5 @@ public class OrderLineItemDetailsDto {
 	public void setPrice(float price) {
 		this.price = price;
 	}
-    
-    
-}
 
+}

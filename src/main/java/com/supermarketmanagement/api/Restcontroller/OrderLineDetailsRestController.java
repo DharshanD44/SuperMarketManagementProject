@@ -1,8 +1,10 @@
 package com.supermarketmanagement.api.Restcontroller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +13,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.supermarketmanagement.api.Model.Custom.CommonListResponse;
+import com.supermarketmanagement.api.Model.Custom.ApiResponse;
+import com.supermarketmanagement.api.Model.Custom.CommonListRequestModel;
 import com.supermarketmanagement.api.Model.Custom.OrderLineItemDetails.OrderLineItemDetailsDto;
 import com.supermarketmanagement.api.Service.OrderLineDetailsService;
 
@@ -28,15 +31,9 @@ public class OrderLineDetailsRestController {
 	public ResponseEntity<?> updateOrderLineStatus(@PathVariable String status, @RequestBody List<Long> id) {
 		return ResponseEntity.ok(orderLineDetailsService.updateLineOrderLineStatus(status, id));
 	}
-	
-	@GetMapping("list/all")
-	public ResponseEntity<?> getOrderLineDetails(){
-		return new ResponseEntity<CommonListResponse<?>>(orderLineDetailsService.getOrderLineDetails(),HttpStatus.OK);
-	}
-	
-	@GetMapping("list/id/{lineid}")
-	public ResponseEntity<?> getOrderLineDetailsById(@PathVariable Long lineid)
-	{
-		return ResponseEntity.ok(orderLineDetailsService.getOrderLineDetailsById(lineid));
+
+	@GetMapping("/list")
+	public ResponseEntity<?> getOrderListDetails(@RequestBody CommonListRequestModel commonListRequestModel) {
+		return ResponseEntity.ok(orderLineDetailsService.getOrderLineListDetails(commonListRequestModel));
 	}
 }

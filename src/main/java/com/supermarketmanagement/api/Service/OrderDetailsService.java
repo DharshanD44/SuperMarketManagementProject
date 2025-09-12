@@ -1,21 +1,14 @@
 package com.supermarketmanagement.api.Service;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
-import org.springframework.http.ResponseEntity;
-
-import com.supermarketmanagement.api.Model.Custom.ResponseMessage;
-import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderDetailsListDto;
-import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderListResponse;
-import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderRequestDto;
-import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderUpdateRequestDto;
+import com.supermarketmanagement.api.Model.Custom.ApiResponse;
+import com.supermarketmanagement.api.Model.Custom.CommonListRequestModel;
 
 public interface OrderDetailsService {
 	
 	Object updateOrderStatus(String status,Long id);
 	
-	Object getOrderDetailsById(Long orderid);
-
-	OrderListResponse getOrderListDetails();
+	Object getOrderListDetails(CommonListRequestModel commonListRequestModel);
 
 }

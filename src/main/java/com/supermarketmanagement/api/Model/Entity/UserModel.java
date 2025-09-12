@@ -32,6 +32,17 @@ public class UserModel {
 	
 	@Column(name = "is_deleted")
 	private boolean isDeleted = false;
+	
+	@Column(name = "role")
+	private String userRole;
+
+	public String getUserRole() {
+		return userRole;
+	}
+
+	public void setUserRole(String userRole) {
+		this.userRole = userRole;
+	}
 
 	public Long getUserId() {
 		return userId;

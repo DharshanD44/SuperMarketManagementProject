@@ -19,48 +19,48 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "order_details")
 public class OrderDetailsModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "order_id")
-    private Long orderId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "order_id")
+	private Long orderId;
 
-    @Column(name = "order_date", nullable = false)
-    private LocalDateTime orderDate;
+	@Column(name = "order_date", nullable = false)
+	private LocalDateTime orderDate;
 
-    @ManyToOne(fetch = FetchType.LAZY) 
-    @JoinColumn(name = "customer_id", nullable = false)  
-    private CustomerModel customer;
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "customer_id", nullable = false)
+	private CustomerModel customer;
 
 	@Column(name = "order_expected_date")
-    private LocalDate orderExpectedDate;
+	private LocalDate orderExpectedDate;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "order_status", nullable = false)
-    private OrderStatusDto orderStatus=OrderStatusDto.NEW;
+	@OneToOne
+	@JoinColumn(name = "order_status", referencedColumnName = "CODE")
+	private SuperMarketCode orderStatus;
 
-    @Column(name = "created_date")
-    private LocalDateTime createdDate = LocalDateTime.now();
+	@Column(name = "created_date")
+	private LocalDateTime createdDate = LocalDateTime.now();
 
-    @Column(name = "update_date")
-    private LocalDateTime updateDate;
-    
-    @Column(name = "total_price")
-    private float totalprice;
-    
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderLineItemDetailsModel> lineItemDetailsModels = new ArrayList<>();
+	@Column(name = "update_date")
+	private LocalDateTime updateDate;
 
-    
-    public float getTotalprice() {
+	@Column(name = "total_price")
+	private float totalprice;
+
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+	private List<OrderLineItemDetailsModel> lineItemDetailsModels = new ArrayList<>();
+
+	public float getTotalprice() {
 		return totalprice;
 	}
-
+	
 	public void setTotalprice(float totalprice) {
 		this.totalprice = totalprice;
 	}
@@ -73,16 +73,13 @@ public class OrderDetailsModel {
 		this.orderId = orderId;
 	}
 
-
-	public LocalDateTime  getOrderDate() {
+	public LocalDateTime getOrderDate() {
 		return orderDate;
 	}
-
 
 	public void setOrderDate(LocalDateTime orderDate) {
 		this.orderDate = orderDate;
 	}
-
 
 	public CustomerModel getCustomer() {
 		return customer;
@@ -92,72 +89,50 @@ public class OrderDetailsModel {
 		this.customer = customer;
 	}
 
-
 	public LocalDate getOrderExpectedDate() {
 		return orderExpectedDate;
 	}
-
 
 	public void setOrderExpectedDate(LocalDate orderExpectedDate) {
 		this.orderExpectedDate = orderExpectedDate;
 	}
 
-
-	public OrderStatusDto getOrderStatus() {
+	public SuperMarketCode getOrderStatus() {
 		return orderStatus;
 	}
 
-
-	public void setOrderStatus(OrderStatusDto orderStatus) {
+	public void setOrderStatus(SuperMarketCode orderStatus) {
 		this.orderStatus = orderStatus;
 	}
-
 
 	public LocalDateTime getCreatedDate() {
 		return createdDate;
 	}
 
-
 	public void setCreatedDate(LocalDateTime createdDate) {
 		this.createdDate = createdDate;
 	}
 
-
-	public LocalDateTime  getUpdateDate() {
+	public LocalDateTime getUpdateDate() {
 		return updateDate;
 	}
-
 
 	public void setUpdateDate(LocalDateTime updateDate) {
 		this.updateDate = updateDate;
 	}
 
-
 	public List<OrderLineItemDetailsModel> getLineItemDetailsModels() {
 		return lineItemDetailsModels;
 	}
-
 
 	public void setLineItemDetailsModels(List<OrderLineItemDetailsModel> lineItemDetailsModels) {
 		this.lineItemDetailsModels = lineItemDetailsModels;
 	}
 
-	public OrderDetailsModel(LocalDateTime orderDate, CustomerModel customer, LocalDate orderExpectedDate,
-			OrderStatusDto orderStatus, LocalDateTime createdDate, LocalDateTime updateDate, float totalprice,
-			List<OrderLineItemDetailsModel> lineItemDetailsModels) {
-		super();
-		this.orderDate = orderDate;
-		this.customer = customer;
-		this.orderExpectedDate = orderExpectedDate;
-		this.orderStatus = orderStatus;
-		this.createdDate = createdDate;
-		this.updateDate = updateDate;
-		this.totalprice = totalprice;
-		this.lineItemDetailsModels = lineItemDetailsModels;
-	}
-
 	public OrderDetailsModel() {
-		
-	}  
-}
 
+		this.orderStatus = new SuperMarketCode();
+		this.orderStatus.setCode("NEW");
+
+	}
+}

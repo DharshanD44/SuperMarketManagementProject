@@ -1,4 +1,4 @@
-package com.supermarketmanagement.api.Model.Custom.OrderDetails;
+package com.supermarketmanagement.api.Model.Custom.OrderLineItemDetails;
 
 public class UpdateOrderLineItemsDto {
 

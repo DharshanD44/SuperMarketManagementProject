@@ -1,6 +1,9 @@
 package com.supermarketmanagement.api.Model.Custom.Product;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+
+import com.supermarketmanagement.api.Model.Entity.SuperMarketCode;
 
 public class ProductListDto {
 
@@ -11,15 +14,16 @@ public class ProductListDto {
 	private String productPackageUnitOfMeasure;
 	private Double productPrice;
 	private Integer productCurrentStockPackageCount;
-	private LocalDateTime productEffectiveDate;
-	private LocalDateTime productLastEffectiveDate;
+	private LocalDate productEffectiveDate;
+	private LocalDate productLastEffectiveDate;
+	private String productStatus;
 
 	public ProductListDto() {
 	}
 
 	public ProductListDto(Long productId, String productName, String productPackageType, Integer productPackQuantity,
 			String productPackageUnitOfMeasure, Double productPrice, Integer productCurrentStockPackageCount,
-			LocalDateTime productEffectiveDate, LocalDateTime productLastEffectiveDate) {
+			LocalDate productEffectiveDate, LocalDate productLastEffectiveDate, String productStatus) {
 		this.productId = productId;
 		this.productName = productName;
 		this.productPackageType = productPackageType;
@@ -29,19 +33,15 @@ public class ProductListDto {
 		this.productCurrentStockPackageCount = productCurrentStockPackageCount;
 		this.productEffectiveDate = productEffectiveDate;
 		this.productLastEffectiveDate = productLastEffectiveDate;
+		this.productStatus = productStatus;
 	}
 
-	public ProductListDto(Long productId, String productName, String productPackageType, Integer productPackQuantity,
-			String productPackageUnitOfMeasure, Double productPrice, Integer productCurrentStockPackageCount,
-			LocalDateTime productEffectiveDate) {
-		this.productId = productId;
-		this.productName = productName;
-		this.productPackageType = productPackageType;
-		this.productPackQuantity = productPackQuantity;
-		this.productPackageUnitOfMeasure = productPackageUnitOfMeasure;
-		this.productPrice = productPrice;
-		this.productCurrentStockPackageCount = productCurrentStockPackageCount;
-		this.productEffectiveDate = productEffectiveDate;
+	public String getProductStatus() {
+		return productStatus;
+	}
+
+	public void setProductStatus(String productStatus) {
+		this.productStatus = productStatus;
 	}
 
 	public Long getProductId() {
@@ -100,19 +100,19 @@ public class ProductListDto {
 		this.productCurrentStockPackageCount = productCurrentStockPackageCount;
 	}
 
-	public LocalDateTime getProductEffectiveDate() {
+	public LocalDate getProductEffectiveDate() {
 		return productEffectiveDate;
 	}
 
-	public void setProductEffectiveDate(LocalDateTime productEffectiveDate) {
+	public void setProductEffectiveDate(LocalDate productEffectiveDate) {
 		this.productEffectiveDate = productEffectiveDate;
 	}
 
-	public LocalDateTime getProductLastEffectiveDate() {
+	public LocalDate getProductLastEffectiveDate() {
 		return productLastEffectiveDate;
 	}
 
-	public void setProductLastEffectiveDate(LocalDateTime productLastEffectiveDate) {
+	public void setProductLastEffectiveDate(LocalDate productLastEffectiveDate) {
 		this.productLastEffectiveDate = productLastEffectiveDate;
 	}
 

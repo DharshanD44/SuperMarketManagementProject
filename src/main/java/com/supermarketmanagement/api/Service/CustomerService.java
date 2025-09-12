@@ -1,21 +1,20 @@
 package com.supermarketmanagement.api.Service;
 
-import com.supermarketmanagement.api.Model.Custom.ResponseData;
-import com.supermarketmanagement.api.Model.Custom.ResponseMessage;
+import com.supermarketmanagement.api.Model.Custom.ApiResponse;
+import com.supermarketmanagement.api.Model.Custom.CommonListRequestModel;
+import com.supermarketmanagement.api.Model.Custom.CommonResponse;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
-import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListResponse;
 import com.supermarketmanagement.api.Model.Entity.CustomerModel;
 
 import java.util.List;
+import java.util.Map;
 
 
 public interface CustomerService {
 
-	CustomerListResponse getAllCustomerDetails();
+	CommonResponse addorUpdateCustomerDetails(CustomerListDto customerListDto);
 
-	ResponseMessage addorUpdateCustomerDetails(CustomerListDto customerListDto);
+	CommonResponse deleteCustomerById(Long id);
 
-	ResponseMessage deleteCustomerById(Long id);
-
-	Object findCustomerDetailsById(Long id);
+	Map<String, Object> getCustomerDetails(CommonListRequestModel commonListRequestModel);
 }

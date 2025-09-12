@@ -25,7 +25,7 @@ public class SalesRestController {
 		
         List<SalesProductListDto> topProducts = salesService.findTopSellingProducts(filter);
         return ResponseEntity.ok(topProducts);
-        
+       
     }
 
 }

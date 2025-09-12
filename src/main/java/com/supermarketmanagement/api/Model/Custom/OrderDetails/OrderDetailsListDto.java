@@ -6,10 +6,10 @@ import java.time.LocalDateTime;
 public class OrderDetailsListDto {
 
 	private Long orderId;
-	private LocalDateTime orderDate;
+	private LocalDateTime orderedDate;
 	private Long customerId;
 	private LocalDate orderExpectedDate;
-	private OrderStatusDto orderStatus;
+	private String orderStatus;
 	private LocalDateTime updateDate;
 	private float totalPrice;
 
@@ -21,12 +21,20 @@ public class OrderDetailsListDto {
 		this.orderId = orderId;
 	}
 
+	public String getOrderStatus() {
+		return orderStatus;
+	}
+
+	public void setOrderStatus(String orderStatus) {
+		this.orderStatus = orderStatus;
+	}
+
 	public LocalDateTime getOrderDate() {
-		return orderDate;
+		return orderedDate;
 	}
 
 	public void setOrderDate(LocalDateTime orderDate) {
-		this.orderDate = orderDate;
+		this.orderedDate = orderDate;
 	}
 
 	public Long getCustomerId() {
@@ -43,14 +51,6 @@ public class OrderDetailsListDto {
 
 	public void setOrderExpectedDate(LocalDate orderExpectedDate) {
 		this.orderExpectedDate = orderExpectedDate;
-	}
-
-	public OrderStatusDto getOrderStatus() {
-		return orderStatus;
-	}
-
-	public void setOrderStatus(OrderStatusDto orderStatus) {
-		this.orderStatus = orderStatus;
 	}
 
 	public float getTotalPrice() {
@@ -73,14 +73,14 @@ public class OrderDetailsListDto {
 	public OrderDetailsListDto() {
 	}
 
-	public OrderDetailsListDto(long orderId, LocalDateTime orderDate, long customerId, LocalDate orderExpectedDate,
-			OrderStatusDto orderStatus,LocalDateTime updateDate, float totalPrice) {
+	public OrderDetailsListDto(long orderId, LocalDateTime orderedDate, long customerId, LocalDate orderExpectedDate,
+			LocalDateTime updateDate,String orderStatus, float totalPrice) {
 		this.orderId = orderId;
-		this.orderDate = orderDate;
+		this.orderedDate = orderedDate;
 		this.customerId = customerId;
 		this.orderExpectedDate = orderExpectedDate;
-		this.orderStatus = orderStatus;
 		this.updateDate=updateDate;
+		this.orderStatus = orderStatus;
 		this.totalPrice = totalPrice;
 	}
 }

@@ -5,13 +5,16 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -29,8 +32,12 @@ public class CustomerModel {
     @Column(name = "customer_name")
     private String customerName;
 
+    @OneToOne
+    @JoinColumn(name = "customer_gender",referencedColumnName = "CODE", nullable = false)
+    private SuperMarketCode customerGender;
+    
     @Column(name = "customer_mobileno", unique = true)
-    private String customerMobileno;
+    private Long customerMobileno;
 
     @Column(name = "customer_address")
     private String customerAddress;
@@ -47,19 +54,14 @@ public class CustomerModel {
     @Column(name = "customer_email", unique = true)
     private String customerEmail;
 
-//    @JsonSerialize(using = LocalDateTimeSerializer.class)
-//    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @Column(name = "customer_createdDate")
     private LocalDateTime customerCreatedDate;
-    	
-//    @JsonSerialize(using = LocalDateTimeSerializer.class)
-//    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+
     @Column(name = "customer_last_effective_date")
     private LocalDateTime customerLastEffectiveDate;
-    
-//    @JsonSerialize(using = LocalDateTimeSerializer.class)
-//    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+
     @Column(name = "customer_updated_date")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime customerUpdatedDate;
     
 	@OneToMany
@@ -83,7 +85,23 @@ public class CustomerModel {
         this.customerId = customerId;
     }
 
-    public String getCustomerName() {
+    public SuperMarketCode getCustomerGender() {
+		return customerGender;
+	}
+
+	public void setCustomerGender(SuperMarketCode customerGender) {
+		this.customerGender = customerGender;
+	}
+
+	public List<OrderDetailsModel> getDetailsModels() {
+		return detailsModels;
+	}
+
+	public void setDetailsModels(List<OrderDetailsModel> detailsModels) {
+		this.detailsModels = detailsModels;
+	}
+
+	public String getCustomerName() {
         return customerName;
     }
 
@@ -91,11 +109,11 @@ public class CustomerModel {
         this.customerName = customerName;
     }
 
-    public String getCustomerMobileno() {
+    public Long getCustomerMobileno() {
         return customerMobileno;
     }
 
-    public void setCustomerMobileno(String customerMobileno) {
+    public void setCustomerMobileno(Long customerMobileno) {
         this.customerMobileno = customerMobileno;
     }
 
@@ -154,21 +172,5 @@ public class CustomerModel {
 	public void setCustomerLastEffectiveDate(LocalDateTime customerLastEffectiveDate) {
 		this.customerLastEffectiveDate = customerLastEffectiveDate;
 	}
-
-	public CustomerModel(String customerName, String customerMobileno, String customerAddress, String customerLocation,
-			String customerCity, String customerPincode, String customerEmail, LocalDateTime customerCreatedDate,
-			LocalDateTime customerLastEffectiveDate, LocalDateTime customerUpdatedDate) {
-		super();
-		this.customerName = customerName;
-		this.customerMobileno = customerMobileno;
-		this.customerAddress = customerAddress;
-		this.customerLocation = customerLocation;
-		this.customerCity = customerCity;
-		this.customerPincode = customerPincode;
-		this.customerEmail = customerEmail;
-		this.customerCreatedDate = customerCreatedDate;
-		this.customerLastEffectiveDate = customerLastEffectiveDate;
-		this.customerUpdatedDate = customerUpdatedDate;
-		}
-
+	
 }

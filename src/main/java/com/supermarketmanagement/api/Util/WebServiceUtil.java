@@ -27,7 +27,7 @@ public class WebServiceUtil {
 	public static final String UPDATE_PLACED_ORDER ="ORDER HAS BEEN UPDATED!";
 	public static final String ORDER_ID_NOT_FOUND ="ORDER WITH ID NOT FOUND!";
 	public static final String ORDER_LINE_ID_NOT_FOUND ="ORDER LINE ID NOT FOUND!";
-	public static final String CANT_UPDATE_ORDER ="HAS BEEN PACKED! UPDATE NOT ALLOWED";
+	public static final String CANT_UPDATE_ORDER ="ORDER HAS BEEN PACKED! UPDATE NOT ALLOWED";
 
 	public static final String ORDER_STATUS_PACKED ="ORDER STATUS - PACKED HAS BEEN UPDATED!";
 	public static final String ORDER_STATUS_SHIPPED ="ORDER STATUS - SHIPPED HAS BEEN UPDATED!";

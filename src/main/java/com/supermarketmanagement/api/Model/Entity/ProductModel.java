@@ -5,50 +5,63 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.supermarketmanagement.api.Util.LocalDateDeserializer;
+import com.supermarketmanagement.api.Util.LocalDateSerializer;
+
 @Entity
 @Table(name = "Product_master")
 public class ProductModel {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "product_id")
-    private Long productId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "product_id")
+	private Long productId;
 
-    @Column(name = "product_name")
-    private String productName;
+	@Column(name = "product_name")
+	private String productName;
 
-    @Column(name = "product_package_type")
-    private String productPackageType;
+	@Column(name = "product_package_type")
+	private String productPackageType;
 
-    @Column(name = "product_pack_quantity")
-    private Integer productPackQuantity;
+	@Column(name = "product_pack_quantity")
+	private Integer productPackQuantity;
 
-    @Column(name = "product_package_unit_of_measure")
-    private String productPackageUnitOfMeasure;
+	@Column(name = "product_package_unit_of_measure")
+	private String productPackageUnitOfMeasure;
 
-    @Column(name = "product_price")
-    private Double productPrice;
+	@Column(name = "product_price")
+	private Double productPrice;
 
-    @Column(name = "product_current_stock_package_count")
-    private Integer productCurrentStockPackageCount;
+	@Column(name = "product_current_stock_package_count")
+	private Integer productCurrentStockPackageCount;
 
-    @Column(name = "product_effective_date")
-    private LocalDateTime productEffectiveDate;
+	@JsonSerialize(using = LocalDateSerializer.class)
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@Column(name = "product_effective_date")
+	private LocalDate productEffectiveDate;
 
-    @Column(name = "product_last_effective_date")
-    private LocalDateTime productLastEffectiveDate;
+	@JsonSerialize(using = LocalDateSerializer.class)
+	@JsonDeserialize(using = LocalDateDeserializer.class)
+	@Column(name = "product_last_effective_date")
+	private LocalDate productLastEffectiveDate;
 
-    @Column(name = "old_product_id")
-    private Long oldProductId;
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "product_status", referencedColumnName = "CODE")
+	private SuperMarketCode productStatus;
 
-    @Column(name = "product_created_date")
-    private LocalDateTime productCreatedDate;
+	@Column(name = "old_product_id")
+	private Long oldProductId;
 
-    @Column(name = "product_updated_date")
-    private LocalDateTime productUpdatedtedDate;
-    
-    @Column(name = "is_deleted")
-    private Boolean isDeleted = false;
+	@Column(name = "product_created_date")
+	private LocalDateTime productCreatedDate;
+
+	@Column(name = "product_updated_date")
+	private LocalDateTime productUpdatedtedDate;
+
+	@Column(name = "is_deleted")
+	private Boolean isDeleted = false;
 
 	public Long getProductId() {
 		return productId;
@@ -106,19 +119,19 @@ public class ProductModel {
 		this.productCurrentStockPackageCount = productCurrentStockPackageCount;
 	}
 
-	public LocalDateTime getProductEffectiveDate() {
+	public LocalDate getProductEffectiveDate() {
 		return productEffectiveDate;
 	}
 
-	public void setProductEffectiveDate(LocalDateTime productEffectiveDate) {
+	public void setProductEffectiveDate(LocalDate productEffectiveDate) {
 		this.productEffectiveDate = productEffectiveDate;
 	}
 
-	public LocalDateTime getProductLastEffectiveDate() {
+	public LocalDate getProductLastEffectiveDate() {
 		return productLastEffectiveDate;
 	}
 
-	public void setProductLastEffectiveDate(LocalDateTime productLastEffectiveDate) {
+	public void setProductLastEffectiveDate(LocalDate productLastEffectiveDate) {
 		this.productLastEffectiveDate = productLastEffectiveDate;
 	}
 
@@ -154,31 +167,17 @@ public class ProductModel {
 		this.isDeleted = isDeleted;
 	}
 
-	public ProductModel(String productName, String productPackageType, Integer productPackQuantity,
-			String productPackageUnitOfMeasure, Double productPrice, Integer productCurrentStockPackageCount,
-			LocalDateTime productEffectiveDate, LocalDateTime productLastEffectiveDate, Long oldProductId,
-			LocalDateTime productCreatedDate, LocalDateTime productUpdatedtedDate, Boolean isDeleted) {
-		
-		this.productName = productName;
-		this.productPackageType = productPackageType;
-		this.productPackQuantity = productPackQuantity;
-		this.productPackageUnitOfMeasure = productPackageUnitOfMeasure;
-		this.productPrice = productPrice;
-		this.productCurrentStockPackageCount = productCurrentStockPackageCount;
-		this.productEffectiveDate = productEffectiveDate;
-		this.productLastEffectiveDate = productLastEffectiveDate;
-		this.oldProductId = oldProductId;
-		this.productCreatedDate = productCreatedDate;
-		this.productUpdatedtedDate = productUpdatedtedDate;
-		this.isDeleted = isDeleted;
+	public SuperMarketCode getProductStatus() {
+		return productStatus;
+	}
+
+	public void setProductStatus(SuperMarketCode productStatus) {
+		this.productStatus = productStatus;
 	}
 
 	public ProductModel() {
+		this.productStatus = new SuperMarketCode();
+		this.productStatus.setCode("A");
 	}
-	
-	
-	
-    
-    
-}
 
+}

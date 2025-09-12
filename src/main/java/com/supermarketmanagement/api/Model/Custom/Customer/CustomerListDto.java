@@ -12,13 +12,22 @@ public class CustomerListDto {
 
 	private Long customerId;
 	private String customerName;
-	private String customerMobileno;
+	private String customerGender;
+	private Long customerMobileno;
 	private String customerAddress;
 	private String customerLocation;
 	private String customerCity;
 	private String customerPincode;
 	private String customerEmail;
 
+
+	public String getCustomerGender() {
+		return customerGender;
+	}
+
+	public void setCustomerGender(String customerGender) {
+		this.customerGender = customerGender;
+	}
 
 	public Long getCustomerId() {
 		return customerId;
@@ -36,11 +45,11 @@ public class CustomerListDto {
 		this.customerName = customerName;
 	}
 
-	public String getCustomerMobileno() {
+	public Long getCustomerMobileno() {
 		return customerMobileno;
 	}
 
-	public void setCustomerMobileno(String customerMobileno) {
+	public void setCustomerMobileno(Long customerMobileno) {
 		this.customerMobileno = customerMobileno;
 	}
 
@@ -84,10 +93,11 @@ public class CustomerListDto {
 		this.customerEmail = customerEmail;
 	}
 
-	public CustomerListDto(Long customerId, String customerName, String customerMobileno, String customerAddress,
+	public CustomerListDto(Long customerId, String customerName,String customerGender, Long customerMobileno, String customerAddress,
 			String customerLocation, String customerCity, String customerPincode, String customerEmail) {
 		this.customerId = customerId;
 		this.customerName = customerName;
+		this.customerGender= customerGender;
 		this.customerMobileno = customerMobileno;
 		this.customerAddress = customerAddress;
 		this.customerLocation = customerLocation;

@@ -1,17 +1,29 @@
 package com.supermarketmanagement.api.Model.Custom;
 
-public class ResponseData {
+public class CommonResponse {
 	private String status;
 
 	private Object data;
 
-	public ResponseData() {
-		
+	private String message;
+	
+	public String getMessage() {
+		return message;
 	}
 
-	public ResponseData(String status, Object data) {
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public CommonResponse() {	
+		
+	}
+	
+	public CommonResponse(String status, Object data, String message) {
+		super();
 		this.status = status;
 		this.data = data;
+		this.message = message;
 	}
 
 	public String getStatus() {

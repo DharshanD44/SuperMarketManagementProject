@@ -5,26 +5,18 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
-import com.supermarketmanagement.api.Model.Custom.CommonListResponse;
-import com.supermarketmanagement.api.Model.Custom.ResponseData;
-import com.supermarketmanagement.api.Model.Custom.ResponseMessage;
-import com.supermarketmanagement.api.Model.Custom.Product.ActiveProductsListDto;
-import com.supermarketmanagement.api.Model.Custom.Product.InactiveProductListDto;
+import com.supermarketmanagement.api.Model.Custom.CommonResponse;
+import com.supermarketmanagement.api.Model.Custom.Product.ProductFilterRequest;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductListDto;
-import com.supermarketmanagement.api.Model.Custom.Product.ProductListRequestModel;
-import com.supermarketmanagement.api.Model.Custom.Product.ProductMessageDto;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductPriceHistoryDto;
 import com.supermarketmanagement.api.Model.Entity.ProductModel;
+import com.supermarketmanagement.api.Model.Entity.SuperMarketCode;
 import com.supermarketmanagement.api.Service.ProductService;
 import com.supermarketmanagement.api.Util.WebServiceUtil;
 import com.supermarketmanagement.api.dao.ProductDao;
+import com.supermarketmanagement.api.dao.SuperMarketCodeDao;
 
 import jakarta.transaction.Transactional;
 
@@ -34,21 +26,24 @@ public class ProductServiceImp implements ProductService {
 
 	@Autowired
 	private ProductDao productDao;
+	
+	@Autowired
+	private SuperMarketCodeDao superMarketCodeDao;
 
 	@Override
 	public Object updateProduct(ProductModel updatedProduct) {
 
 		ProductModel existingProduct = productDao.findByProductId(updatedProduct.getProductId());
-		ResponseMessage responseMessage = new ResponseMessage();
+		CommonResponse responseMessage = new CommonResponse();
 		if (existingProduct == null) {
-			responseMessage.setStatus(WebServiceUtil.SUCCESS_STATUS);
+			responseMessage.setStatus(WebServiceUtil.FAILED_STATUS);
 			responseMessage.setMessage(WebServiceUtil.PRODUCT_ID_NOT_FOUND);
 			return responseMessage;
 		}
 
 		else {
 
-			if (existingProduct.getProductEffectiveDate().isAfter(LocalDateTime.now())) {
+			if (existingProduct.getProductEffectiveDate().isAfter(LocalDate.now())) {
 				if (updatedProduct.getProductEffectiveDate() != null)
 					existingProduct.setProductEffectiveDate(updatedProduct.getProductEffectiveDate());
 
@@ -60,11 +55,11 @@ public class ProductServiceImp implements ProductService {
 				existingProduct.setProductCreatedDate(LocalDateTime.now());
 				existingProduct.setProductCurrentStockPackageCount(updatedProduct.getProductCurrentStockPackageCount());
 				existingProduct.setProductUpdatedtedDate(LocalDateTime.now());
-				responseMessage.setStatus(WebServiceUtil.SUCCESS_STATUS);
-				responseMessage.setMessage(WebServiceUtil.PRODUCT_UPDATED);
-				return responseMessage;
 			} else {
-				existingProduct.setProductLastEffectiveDate(LocalDateTime.now());
+				SuperMarketCode inactiveCode = superMarketCodeDao.findByCode("IA");
+				existingProduct.setProductLastEffectiveDate(LocalDate.now());
+				existingProduct.setProductUpdatedtedDate(LocalDateTime.now());
+				existingProduct.setProductStatus(inactiveCode);
 
 				ProductModel newProduct = new ProductModel();
 				newProduct.setProductName(updatedProduct.getProductName());
@@ -79,45 +74,33 @@ public class ProductServiceImp implements ProductService {
 				newProduct.setProductCreatedDate(LocalDateTime.now());
 				newProduct.setProductUpdatedtedDate(LocalDateTime.now());
 				productDao.saveProduct(newProduct);
-				responseMessage.setStatus(WebServiceUtil.SUCCESS_STATUS);
-				responseMessage.setMessage(WebServiceUtil.PRODUCT_UPDATED);
-				return responseMessage;
 			}
+			responseMessage.setStatus(WebServiceUtil.SUCCESS_STATUS);
+			responseMessage.setMessage(WebServiceUtil.PRODUCT_UPDATED);
+			return responseMessage;
 		}
 	}
 
 	@Override
 	public Object getProductDetailsById(int id) {
 		ProductModel model = productDao.getProductDetailsById(id);
-		ResponseData responseData = new ResponseData();
+		CommonResponse commonResponse = new CommonResponse();
 		if (model == null) {
-			responseData.setStatus(WebServiceUtil.FAILED_STATUS);
-			responseData.setData(null);
-			return responseData;
+			commonResponse.setStatus(WebServiceUtil.FAILED_STATUS);
+			commonResponse.setData(null);
+			return commonResponse;
 		} else {
-			responseData.setData(model);
-			responseData.setStatus(WebServiceUtil.SUCCESS_STATUS);
-			return responseData;
+			commonResponse.setData(model);
+			commonResponse.setStatus(WebServiceUtil.SUCCESS_STATUS);
+			return commonResponse;
 		}
 	}
 
 	@Override
-	public List<ActiveProductsListDto> getActiveProductDetails(LocalDateTime date) {
-
-		return productDao.getActiveProductDetails(date);
-	}
-
-	@Override
-	public List<InactiveProductListDto> getInActiveProductDetails(LocalDateTime date) {
-
-		return productDao.getInActiveProductDetails(date);
-	}
-
-	@Override
-	public Object addProductDetails(ProductModel productModel) {
+	public Object addProductDetails(ProductListDto productModel) {
 
 		ProductModel dto = new ProductModel();
-		ResponseMessage responseMessage = new ResponseMessage();
+		CommonResponse responseMessage = new CommonResponse();
 		dto.setProductCreatedDate(LocalDateTime.now());
 		dto.setProductCurrentStockPackageCount(productModel.getProductCurrentStockPackageCount());
 		dto.setProductEffectiveDate(productModel.getProductEffectiveDate());
@@ -127,7 +110,10 @@ public class ProductServiceImp implements ProductService {
 		dto.setProductPackQuantity(productModel.getProductPackQuantity());
 		dto.setProductPackageUnitOfMeasure(productModel.getProductPackageUnitOfMeasure());
 		dto.setProductPrice(productModel.getProductPrice());
-		productDao.addProductDetails(dto);
+	    SuperMarketCode status = superMarketCodeDao.findByDescription(productModel.getProductStatus());
+	    dto.setProductStatus(status);
+
+		productDao.saveProduct(dto);
 
 		responseMessage.setStatus(WebServiceUtil.SUCCESS_STATUS);
 		responseMessage.setMessage(WebServiceUtil.NEW_PRODUCT_ADDED);
@@ -138,7 +124,7 @@ public class ProductServiceImp implements ProductService {
 	public Object deleteProductById(Long id) {
 
 		ProductModel existingProduct = productDao.findByProductId(id);
-		ResponseMessage responseMessage = new ResponseMessage();
+		CommonResponse responseMessage = new CommonResponse();
 		if (existingProduct == null) {
 			responseMessage.setStatus(WebServiceUtil.SUCCESS_STATUS);
 			responseMessage.setMessage(WebServiceUtil.PRODUCT_ID_NOT_FOUND);
@@ -151,7 +137,7 @@ public class ProductServiceImp implements ProductService {
 	}
 
 	@Override
-	public CommonListResponse<?> getProductPriceHistoryById(Long activeId) {
+	public Object getProductPriceHistoryById(Long activeId) {
 	    List<ProductPriceHistoryDto> result = new ArrayList<>();
 	    Long currentId = activeId;
 
@@ -159,10 +145,7 @@ public class ProductServiceImp implements ProductService {
 	        ProductModel product = productDao.findByProductId(currentId);
 
 	        if (product == null) {
-	            CommonListResponse<String> failResponse = new CommonListResponse<>();
-	            failResponse.setStatus(WebServiceUtil.FAILED_STATUS);
-	            failResponse.setData(WebServiceUtil.PRODUCT_ID_NOT_FOUND);
-	            return failResponse;
+	            
 	        }
 
 	        result.add(new ProductPriceHistoryDto(
@@ -174,17 +157,14 @@ public class ProductServiceImp implements ProductService {
 
 	        currentId = product.getOldProductId();
 	    }
-
-	    CommonListResponse<List<ProductPriceHistoryDto>> successResponse = new CommonListResponse<>();
-	    successResponse.setStatus(WebServiceUtil.SUCCESS_STATUS);
-	    successResponse.setData(result);
-	    return successResponse;
+	    CommonResponse response = new CommonResponse();
+	    response.setData(result);
+	    response.setStatus(WebServiceUtil.SUCCESS_STATUS);
+	    return response;
 	}
-
 
 	@Override
-	public Map<String, Object> getAllProductDetails(ProductListRequestModel request) {
+	public Map<String, Object> getAllProductDetails(ProductFilterRequest request) {
 		return productDao.getAllProductDetails(request);
 	}
-
 }

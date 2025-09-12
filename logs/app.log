@@ -1,0 +1,7 @@
+2025-09-12 11:19:31 [main] INFO  o.s.w.s.DispatcherServlet - Initializing Servlet 'dispatcher'
+2025-09-12 11:19:32 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-09-12 11:19:32 [main] INFO  o.s.d.r.c.RepositoryConfigurationDelegate - Finished Spring Data repository scanning in 125 ms. Found 6 JPA repository interfaces.
+2025-09-12 11:19:36 [main] INFO  o.s.o.j.LocalContainerEntityManagerFactoryBean - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-09-12 11:19:38 [main] INFO  o.s.s.c.TaskSchedulerRouter - No TaskScheduler/ScheduledExecutorService bean found for scheduled processing
+2025-09-12 11:19:38 [main] INFO  o.s.w.s.DispatcherServlet - Completed initialization in 7225 ms
+2025-09-12 11:22:13 [http-nio-8080-exec-4] INFO  c.s.a.S.CustomerServiceImp - Adding the Customer Detailscom.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto@3ccf73dd

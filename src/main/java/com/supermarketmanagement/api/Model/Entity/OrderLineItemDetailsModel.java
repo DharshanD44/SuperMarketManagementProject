@@ -14,6 +14,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -39,10 +40,10 @@ public class OrderLineItemDetailsModel {
     @Column(name = "order_quantity_in_package", nullable = false)
     private Integer orderQuantityInPackage;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "order_line_item_status", nullable = false)
-    private OrderStatusDto statusDto=OrderStatusDto.NEW;
-
+	@OneToOne
+	@JoinColumn(name = "order_status",referencedColumnName = "CODE",nullable = false)
+	private SuperMarketCode orderStatus;
+	
     @Column(name = "created_date", updatable = false)
     private LocalDateTime createdDate = LocalDateTime.now();
 
@@ -52,17 +53,12 @@ public class OrderLineItemDetailsModel {
     @Column(name = "individual_price")
     private float price;
 
+    
     public OrderLineItemDetailsModel() {
+    	  this.orderStatus = new SuperMarketCode();
+          this.orderStatus.setCode("NEW");
 	
     }
-
-    public OrderStatusDto getStatusDto() {
-		return statusDto;
-	}
-
-	public void setStatusDto(OrderStatusDto statusDto) {
-		this.statusDto = statusDto;
-	}
 
 	public float getPrice() {
 		return price;
@@ -112,14 +108,6 @@ public class OrderLineItemDetailsModel {
         this.orderQuantityInPackage = orderQuantityInPackage;
     }
 
-    public OrderStatusDto getOrderLineItemStatus() {
-        return statusDto;
-    }
-
-    public void setOrderLineItemStatus(OrderStatusDto orderLineItemStatus) {
-        this.statusDto = orderLineItemStatus;
-    }
-
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
@@ -136,20 +124,22 @@ public class OrderLineItemDetailsModel {
         this.updateDate = updateDate;
     }
 
-	public OrderLineItemDetailsModel(OrderDetailsModel order, ProductModel product, Integer orderQuantityIndividualUnit,
-			Integer orderQuantityInPackage, OrderStatusDto statusDto, LocalDateTime createdDate, LocalDateTime updateDate,
-			float price) {
-		super();
-		this.order = order;
-		this.product = product;
-		this.orderQuantityIndividualUnit = orderQuantityIndividualUnit;
-		this.orderQuantityInPackage = orderQuantityInPackage;
-		this.statusDto = statusDto;
-		this.createdDate = createdDate;
-		this.updateDate = updateDate;
-		this.price = price;
+	public SuperMarketCode getOrderStatus() {
+		return orderStatus;
 	}
 
-	
+	public void setOrderStatus(SuperMarketCode orderStatus) {
+		this.orderStatus = orderStatus;
+	}
     
+//	public Long getSupplierId() {
+//		return supplierId;
+//	}
+//
+//	public void setSupplierId(Long supplierId) {
+//		this.supplierId = supplierId;
+//	}
+	
+	
+
 }

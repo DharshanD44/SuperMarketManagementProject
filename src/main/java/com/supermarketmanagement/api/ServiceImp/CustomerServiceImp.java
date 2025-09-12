@@ -1,11 +1,11 @@
 package com.supermarketmanagement.api.ServiceImp;
 
-import com.supermarketmanagement.api.Model.Custom.ResponseData;
-import com.supermarketmanagement.api.Model.Custom.ResponseMessage;
+import com.supermarketmanagement.api.Model.Custom.CommonListRequestModel;
+import com.supermarketmanagement.api.Model.Custom.CommonResponse;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
-import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListResponse;
-import com.supermarketmanagement.api.Model.Custom.Customer.CustomerMessageDto;
 import com.supermarketmanagement.api.Model.Entity.CustomerModel;
+import com.supermarketmanagement.api.Model.Entity.SuperMarketCode;
+import com.supermarketmanagement.api.Repository.SuperMarketCodeRepoistory;
 import com.supermarketmanagement.api.Service.CustomerService;
 import com.supermarketmanagement.api.Util.WebServiceUtil;
 import com.supermarketmanagement.api.dao.CustomerDao;
@@ -14,31 +14,34 @@ import jakarta.transaction.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 @Service
 @Transactional
 public class CustomerServiceImp implements CustomerService{
 	
+	private static final Logger logger = LoggerFactory.getLogger(CustomerServiceImp.class);
+	
 	@Autowired
 	private CustomerDao customerDao;
 	
-	@Override
-	public CustomerListResponse getAllCustomerDetails() {
-		CustomerListResponse customerListResponse = new CustomerListResponse();
-		customerListResponse.setStatus(WebServiceUtil.SUCCESS_STATUS);
-		customerListResponse.setData(customerDao.getCustomerListDtos());
-		return customerListResponse;
-	}
+	@Autowired
+	private SuperMarketCodeRepoistory codeRepoistory;
 
 	@Override
-	public ResponseMessage addorUpdateCustomerDetails(CustomerListDto customerListDto) {
+	public CommonResponse addorUpdateCustomerDetails(CustomerListDto customerListDto) {
 		
+		logger.info("Adding the Customer Details"+customerListDto);
 		CustomerModel entity;
-		ResponseMessage response= new ResponseMessage();
+		CommonResponse response= new CommonResponse();
 		if(customerListDto.getCustomerId() == null)
 		{
 			entity = new CustomerModel();
@@ -55,6 +58,8 @@ public class CustomerServiceImp implements CustomerService{
 			}
 			entity.setCustomerUpdatedDate(LocalDateTime.now());
 		}
+		SuperMarketCode gender = codeRepoistory.findByCode(customerListDto.getCustomerGender());
+		
 		entity.setCustomerName(customerListDto.getCustomerName());
 		entity.setCustomerMobileno(customerListDto.getCustomerMobileno());
 		entity.setCustomerAddress(customerListDto.getCustomerAddress());
@@ -62,9 +67,9 @@ public class CustomerServiceImp implements CustomerService{
 		entity.setCustomerCity(customerListDto.getCustomerCity());
 		entity.setCustomerPincode(customerListDto.getCustomerPincode());
 		entity.setCustomerEmail(customerListDto.getCustomerEmail());
+		entity.setCustomerGender(gender);
 		
 		customerDao.saveCustomer(entity);
-//		entity.setCustomerUpdatedDate(customerListDto.getCustomerUpdatedDate());
 		if(customerListDto.getCustomerId() == null) {
 			response.setStatus(WebServiceUtil.SUCCESS_STATUS);
 			response.setMessage(WebServiceUtil.CUSTOMER_ADDED);
@@ -73,16 +78,16 @@ public class CustomerServiceImp implements CustomerService{
 		else
 		{
 			response.setStatus(WebServiceUtil.SUCCESS_STATUS);
-			response.setMessage(WebServiceUtil.CANT_UPDATE_ORDER );
+			response.setMessage(WebServiceUtil.CUSTOMER_UPDATED );
 			return response;	
 		}
 		
 	}
 
 	@Override
-	public ResponseMessage deleteCustomerById(Long id) {
+	public CommonResponse deleteCustomerById(Long id) {
 		CustomerModel customerModel = customerDao.findByCustomerId(id);
-		ResponseMessage response= new ResponseMessage();
+		CommonResponse response= new CommonResponse();
 		if(customerModel == null)
 		{
 			response.setStatus(WebServiceUtil.FAILED_STATUS);
@@ -101,23 +106,8 @@ public class CustomerServiceImp implements CustomerService{
 	}
 
 	@Override
-	public Object findCustomerDetailsById(Long id) {
-		CustomerListDto customerListDto = customerDao.findCustomerDetailsById(id);
-		if(customerListDto==null)
-		{
-			ResponseMessage message = new ResponseMessage();
-			message.setMessage(WebServiceUtil.CUSTOMER_NOT_FOUND+" "+id);
-			message.setStatus(WebServiceUtil.FAILED_STATUS);
-			return message;
-		}
-		else
-		{
-			ResponseData data = new ResponseData();
-			data.setData(customerListDto);
-			data.setStatus(WebServiceUtil.SUCCESS_STATUS);
-			return data;
-		}
-		
+	public Map<String, Object> getCustomerDetails(CommonListRequestModel commonListRequestModel) {
+		return customerDao.getCustomerDetails(commonListRequestModel);
 	}
 
 }
