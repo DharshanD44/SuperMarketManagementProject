@@ -18,6 +18,7 @@ import com.supermarketmanagement.api.Util.WebServiceUtil;
 import com.supermarketmanagement.api.dao.OrderLineDetailsDao;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -50,8 +51,8 @@ public class OrderLineDetailsDaoImp implements OrderLineDetailsDao{
 	public Map<String, Object> getOrderLineListDetails(CommonListRequestModel commonListRequestModel) {
 	    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-	    CriteriaQuery<OrderLineItemDetailsDto> cq = cb.createQuery(OrderLineItemDetailsDto.class);
-	    Root<OrderLineItemDetailsModel> root = cq.from(OrderLineItemDetailsModel.class);
+	    CriteriaQuery<OrderLineItemDetailsDto> criteriaQuery = cb.createQuery(OrderLineItemDetailsDto.class);
+	    Root<OrderLineItemDetailsModel> root = criteriaQuery.from(OrderLineItemDetailsModel.class);
 
 	    List<Predicate> predicates = new ArrayList<>();
 
@@ -75,7 +76,7 @@ public class OrderLineDetailsDaoImp implements OrderLineDetailsDao{
 			}
 		}
 
-	    cq.multiselect(
+	    criteriaQuery.multiselect(
 	    	    root.get("orderLineId"),
 	    	    root.get("order").get("orderId"),   
 	    	    root.get("product").get("productId"),
@@ -86,7 +87,13 @@ public class OrderLineDetailsDaoImp implements OrderLineDetailsDao{
 	    	    root.get("price")
 	    	).where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 
-	    List<OrderLineItemDetailsDto> results = entityManager.createQuery(cq).getResultList();
+	    TypedQuery<OrderLineItemDetailsDto> queryresult = entityManager.createQuery(criteriaQuery);
+
+		if (commonListRequestModel.getStart() != null || commonListRequestModel.getLength() != null) {
+			queryresult.setFirstResult(commonListRequestModel.getStart());
+			queryresult.setMaxResults(commonListRequestModel.getLength());
+		}
+	    List<OrderLineItemDetailsDto> results = queryresult.getResultList();
 
 	    CriteriaQuery<Long> totalQuery = cb.createQuery(Long.class);
 	    totalQuery.select(cb.count(totalQuery.from(OrderLineItemDetailsModel.class)));
@@ -99,12 +106,20 @@ public class OrderLineDetailsDaoImp implements OrderLineDetailsDao{
 	    Long filteredCount = entityManager.createQuery(filterCountQuery).getSingleResult();
 
 	    Map<String, Object> response = new LinkedHashMap<>();
-	    response.put("status", WebServiceUtil.SUCCESS_STATUS);
-	    response.put("data", results);
-	    response.put("totalCount", totalCount);	
-	    response.put("filteredCount", filteredCount);
-	    
-	    return response;
+
+		if (results == null || results.isEmpty()) {
+			response.put("status", WebServiceUtil.FAILED_STATUS);
+			response.put("data", "NO DATA FOUND");
+			response.put("totalCount", 0);
+			response.put("filteredCount", 0);
+		} else {
+			response.put("status", WebServiceUtil.SUCCESS_STATUS);
+			response.put("totalCount", totalCount);
+			response.put("filteredCount", filteredCount);
+			response.put("data", results);
+		
+		}
+		return response;
 	}
 	
 }

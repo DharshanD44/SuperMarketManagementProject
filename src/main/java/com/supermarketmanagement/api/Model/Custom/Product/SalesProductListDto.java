@@ -1,5 +1,6 @@
 package com.supermarketmanagement.api.Model.Custom.Product;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class SalesProductListDto {
@@ -9,8 +10,8 @@ public class SalesProductListDto {
 	private String productPackageUnitOfMeasure;
 	private Integer productPackQuantity;
 	private Double productPrice;
-	private LocalDateTime productEffectiveDate;
-	private LocalDateTime productLastEffectiveDate;
+	private LocalDate productEffectiveDate;
+	private LocalDate productLastEffectiveDate;
 	private Long TotalPackagesold;
 
 	public Long getProductId() {
@@ -61,25 +62,25 @@ public class SalesProductListDto {
 		this.productPrice = productPrice;
 	}
 
-	public LocalDateTime getProductEffectiveDate() {
+	public LocalDate getProductEffectiveDate() {
 		return productEffectiveDate;
 	}
 
-	public void setProductEffectiveDate(LocalDateTime productEffectiveDate) {
+	public void setProductEffectiveDate(LocalDate productEffectiveDate) {
 		this.productEffectiveDate = productEffectiveDate;
 	}
 
-	public LocalDateTime getProductLastEffectiveDate() {
+	public LocalDate getProductLastEffectiveDate() {
 		return productLastEffectiveDate;
 	}
 
-	public void setProductLastEffectiveDate(LocalDateTime productLastEffectiveDate) {
+	public void setProductLastEffectiveDate(LocalDate productLastEffectiveDate) {
 		this.productLastEffectiveDate = productLastEffectiveDate;
 	}
 
 	public SalesProductListDto(Long productId, String productName, String productPackageUnitOfMeasure,
-			Integer productPackQuantity, Double productPrice, LocalDateTime productEffectiveDate,
-			LocalDateTime productLastEffectiveDate, Long totalPackagesold) {
+			Integer productPackQuantity, Double productPrice, LocalDate productEffectiveDate,
+			LocalDate productLastEffectiveDate, Long totalPackagesold) {
 		super();
 		this.productId = productId;
 		this.productName = productName;

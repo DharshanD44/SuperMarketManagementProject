@@ -56,6 +56,17 @@ public class OrderDetailsModel {
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
 	private List<OrderLineItemDetailsModel> lineItemDetailsModels = new ArrayList<>();
+	
+	@Column(name = "assigned_to")
+	private Long assignedTo;
+
+	public Long getAssignedTo() {
+		return assignedTo;
+	}
+
+	public void setAssignedTo(Long assignedTo) {
+		this.assignedTo = assignedTo;
+	}
 
 	public float getTotalprice() {
 		return totalprice;
@@ -88,7 +99,7 @@ public class OrderDetailsModel {
 	public void setCustomer(CustomerModel customer) {
 		this.customer = customer;
 	}
-
+	
 	public LocalDate getOrderExpectedDate() {
 		return orderExpectedDate;
 	}
@@ -134,5 +145,5 @@ public class OrderDetailsModel {
 		this.orderStatus = new SuperMarketCode();
 		this.orderStatus.setCode("NEW");
 
-	}
+	}	
 }

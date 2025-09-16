@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 
 import com.google.cloud.Date;
 import com.supermarketmanagement.api.Model.Custom.CommonListRequestModel;
+import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderDetailsListDto;
 import com.supermarketmanagement.api.Model.Entity.OrderDetailsModel;
 import com.supermarketmanagement.api.Repository.OrderDetailsRepoistory;
@@ -20,6 +21,7 @@ import com.supermarketmanagement.api.Util.WebServiceUtil;
 import com.supermarketmanagement.api.dao.OrderDetailsDao;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
@@ -67,8 +69,8 @@ public class OrderDetailsDaoImp implements OrderDetailsDao {
 	public Map<String, Object> getOrderListDetails(CommonListRequestModel commonListRequestModel) {
 		CriteriaBuilder cb = entityManager.getCriteriaBuilder();
 
-		CriteriaQuery<OrderDetailsListDto> cq = cb.createQuery(OrderDetailsListDto.class);
-		Root<OrderDetailsModel> root = cq.from(OrderDetailsModel.class);
+		CriteriaQuery<OrderDetailsListDto> criteriaQuery = cb.createQuery(OrderDetailsListDto.class);
+		Root<OrderDetailsModel> root = criteriaQuery.from(OrderDetailsModel.class);
 
 		List<Predicate> predicates = new ArrayList<>();
 
@@ -94,11 +96,19 @@ public class OrderDetailsDaoImp implements OrderDetailsDao {
 			}
 		}
 
-		cq.multiselect(root.get("orderId"), root.get("orderDate"), root.get("customer").get("customerId"),
+		criteriaQuery.multiselect(root.get("orderId"), root.get("orderDate"), root.get("customer").get("customerId"),
 				root.get("orderExpectedDate"), root.get("updateDate"), root.get("orderStatus").get("description"),
 				root.get("totalprice")).where(cb.and(predicates.toArray(new Predicate[0])));
 
-		List<OrderDetailsListDto> results = entityManager.createQuery(cq).getResultList();
+		TypedQuery<OrderDetailsListDto> queryresult = entityManager.createQuery(criteriaQuery);
+
+		if (commonListRequestModel.getStart() != null) {
+			queryresult.setFirstResult(commonListRequestModel.getStart());
+		}
+		if (commonListRequestModel.getLength() != null) {
+			queryresult.setMaxResults(commonListRequestModel.getLength());
+		}
+		List<OrderDetailsListDto> results = queryresult.getResultList();
 
 		CriteriaQuery<Long> totalQuery = cb.createQuery(Long.class);
 		totalQuery.select(cb.count(totalQuery.from(OrderDetailsModel.class)));
@@ -110,11 +120,19 @@ public class OrderDetailsDaoImp implements OrderDetailsDao {
 		Long filteredCount = entityManager.createQuery(filterCountQuery).getSingleResult();
 
 		Map<String, Object> response = new LinkedHashMap<>();
-		response.put("status", WebServiceUtil.SUCCESS_STATUS);
-		response.put("data", results);
-		response.put("total", totalCount);
-		response.put("filtered", filteredCount);
 
+		if (results == null || results.isEmpty()) {
+			response.put("status", WebServiceUtil.FAILED_STATUS);
+			response.put("data", "NO DATA FOUND");
+			response.put("totalCount", 0);
+			response.put("filteredCount", 0);
+		} else {
+			response.put("status", WebServiceUtil.SUCCESS_STATUS);
+			response.put("totalCount", totalCount);
+			response.put("filteredCount", filteredCount);
+			response.put("data", results);
+		
+		}
 		return response;
 	}
 

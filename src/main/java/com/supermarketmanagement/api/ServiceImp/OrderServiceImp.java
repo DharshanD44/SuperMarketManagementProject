@@ -42,11 +42,11 @@ public class OrderServiceImp implements OrderService {
 	@Override
 	public Object placeOrder(OrderRequestDto requestDto) {
 
-		CustomerModel customerModel = customerDao.findByCustomerId(requestDto.getCustomerId());
+		CustomerModel customerId = customerDao.findByCustomerId(requestDto.getCustomerId());
 		CommonResponse response = new CommonResponse();
 		float totalPrice = 0;
 		OrderDetailsModel orderDetailsDao = new OrderDetailsModel();
-		orderDetailsDao.setCustomer(customerModel);
+		orderDetailsDao.setCustomer(customerId);
 		orderDetailsDao.setOrderExpectedDate(LocalDate.now().plusDays(2));
 		orderDetailsDao.setOrderDate(LocalDateTime.now().withNano(0));
 		orderDetailsDao.setCreatedDate(LocalDateTime.now());
@@ -112,7 +112,7 @@ public class OrderServiceImp implements OrderService {
 		OrderDetailsModel orderDetailsModel = orderdetailsDao.findByOrderId(orderId);
 		float totalPrice = orderDetailsModel.getTotalprice();
 
-		if ("P".equals(lineItem.getOrderStatus().getCode())) {
+		if (WebServiceUtil.PACKED_STATUS.equals(lineItem.getOrderStatus().getCode())) {
 		    response.setStatus(WebServiceUtil.FAILED_STATUS);
 		    response.setMessage(lineItem.getProduct().getProductName() + " " + WebServiceUtil.CANT_UPDATE_ORDER);
 		    return response;

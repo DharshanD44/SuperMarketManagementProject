@@ -39,7 +39,7 @@ public class CustomerServiceImp implements CustomerService{
 	@Override
 	public CommonResponse addorUpdateCustomerDetails(CustomerListDto customerListDto) {
 		
-		logger.info("Adding the Customer Details"+customerListDto);
+		logger.info("Request received to add or update customer: {}", customerListDto);
 		CustomerModel entity;
 		CommonResponse response= new CommonResponse();
 		if(customerListDto.getCustomerId() == null)
@@ -72,15 +72,16 @@ public class CustomerServiceImp implements CustomerService{
 		customerDao.saveCustomer(entity);
 		if(customerListDto.getCustomerId() == null) {
 			response.setStatus(WebServiceUtil.SUCCESS_STATUS);
-			response.setMessage(WebServiceUtil.CUSTOMER_ADDED);
-			return response;	
+			response.setMessage(WebServiceUtil.NEW_CUSTOMER_ADDED);
+			logger.info("New customer added with ID: {}", entity.getCustomerId());
 		}
 		else
 		{
 			response.setStatus(WebServiceUtil.SUCCESS_STATUS);
 			response.setMessage(WebServiceUtil.CUSTOMER_UPDATED );
-			return response;	
+			logger.info("Customer with ID {} updated successfully.", entity.getCustomerId());
 		}
+		return response;
 		
 	}
 
@@ -90,12 +91,14 @@ public class CustomerServiceImp implements CustomerService{
 		CommonResponse response= new CommonResponse();
 		if(customerModel == null)
 		{
+			logger.warn("Customer with ID {} not found. Cannot delete.", id);
 			response.setStatus(WebServiceUtil.FAILED_STATUS);
 			response.setMessage(WebServiceUtil.CUSTOMER_NOT_FOUND);
 			return response;
 		}
 		else
 		{
+			logger.info("Customer with ID {} marked as deleted.", id);
 			customerModel.setCustomerLastEffectiveDate(LocalDateTime.now());
 			customerModel.setCustomerUpdatedDate(LocalDateTime.now());
 			response.setStatus(WebServiceUtil.SUCCESS_STATUS);
@@ -107,7 +110,7 @@ public class CustomerServiceImp implements CustomerService{
 
 	@Override
 	public Map<String, Object> getCustomerDetails(CommonListRequestModel commonListRequestModel) {
-		return customerDao.getCustomerDetails(commonListRequestModel);
+			return customerDao.getCustomerDetails(commonListRequestModel);
 	}
 
 }

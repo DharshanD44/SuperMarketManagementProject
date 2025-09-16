@@ -130,16 +130,6 @@ public class OrderLineItemDetailsModel {
 
 	public void setOrderStatus(SuperMarketCode orderStatus) {
 		this.orderStatus = orderStatus;
-	}
-    
-//	public Long getSupplierId() {
-//		return supplierId;
-//	}
-//
-//	public void setSupplierId(Long supplierId) {
-//		this.supplierId = supplierId;
-//	}
-	
-	
+	}	
 
 }

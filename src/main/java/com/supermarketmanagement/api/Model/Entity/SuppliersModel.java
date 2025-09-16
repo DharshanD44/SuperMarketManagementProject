@@ -20,11 +20,11 @@ public class SuppliersModel {
     @Column(name = "supplier_name", nullable = false, length = 100)
     private String supplierName;
 
-    @Column(name = "email", length = 50, unique = true)
-    private String email;
+    @Column(name = "email_id", length = 50, unique = true)
+    private String supplierEmailId;
 
     @Column(name = "mobile_number", length = 15, unique = true)
-    private String mobileNumber;
+    private String supplierMobileNumber;
 
     @Column(name = "address", length = 255)
     private String address;
@@ -47,10 +47,18 @@ public class SuppliersModel {
     @Column(name = "updated_date")
     private LocalDateTime updatedDate;
     
-//    @OneToMany
-//    private List<OrderLineItemDetailsModel> 
+    @Column(name = "is_deleted")
+    private Boolean deleteFlag;
 
-    public Long getSupplierId() {
+    public Boolean getDeleteFlag() {
+		return deleteFlag;
+	}
+
+	public void setDeleteFlag(Boolean deleteFlag) {
+		this.deleteFlag = deleteFlag;
+	}
+
+	public Long getSupplierId() {
         return supplierId;
     }
 
@@ -66,20 +74,20 @@ public class SuppliersModel {
         this.supplierName = supplierName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getMobileNumber() {
-		return mobileNumber;
+	public String getSupplierEmailId() {
+		return supplierEmailId;
 	}
 
-	public void setMobileNumber(String mobileNumber) {
-		this.mobileNumber = mobileNumber;
+	public void setSupplierEmailId(String supplierEmailId) {
+		this.supplierEmailId = supplierEmailId;
+	}
+
+	public String getSupplierMobileNumber() {
+		return supplierMobileNumber;
+	}
+
+	public void setSupplierMobileNumber(String supplierMobileNumber) {
+		this.supplierMobileNumber = supplierMobileNumber;
 	}
 
 	public String getAddress() {

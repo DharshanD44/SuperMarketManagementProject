@@ -40,7 +40,6 @@ public class ProductServiceImp implements ProductService {
 			responseMessage.setMessage(WebServiceUtil.PRODUCT_ID_NOT_FOUND);
 			return responseMessage;
 		}
-
 		else {
 
 			if (existingProduct.getProductEffectiveDate().isAfter(LocalDate.now())) {
@@ -56,10 +55,12 @@ public class ProductServiceImp implements ProductService {
 				existingProduct.setProductCurrentStockPackageCount(updatedProduct.getProductCurrentStockPackageCount());
 				existingProduct.setProductUpdatedtedDate(LocalDateTime.now());
 			} else {
-				SuperMarketCode inactiveCode = superMarketCodeDao.findByCode("IA");
+				SuperMarketCode inactiveCode = superMarketCodeDao.findByCode("INACTIVE");
+				SuperMarketCode activeCode = superMarketCodeDao.findByCode("ACTIVE");
+				
+				existingProduct.setProductStatus(inactiveCode);
 				existingProduct.setProductLastEffectiveDate(LocalDate.now());
 				existingProduct.setProductUpdatedtedDate(LocalDateTime.now());
-				existingProduct.setProductStatus(inactiveCode);
 
 				ProductModel newProduct = new ProductModel();
 				newProduct.setProductName(updatedProduct.getProductName());
@@ -73,6 +74,7 @@ public class ProductServiceImp implements ProductService {
 				newProduct.setOldProductId(existingProduct.getProductId());
 				newProduct.setProductCreatedDate(LocalDateTime.now());
 				newProduct.setProductUpdatedtedDate(LocalDateTime.now());
+				newProduct.setProductStatus(activeCode);
 				productDao.saveProduct(newProduct);
 			}
 			responseMessage.setStatus(WebServiceUtil.SUCCESS_STATUS);
@@ -96,29 +98,29 @@ public class ProductServiceImp implements ProductService {
 		}
 	}
 
-	@Override
-	public Object addProductDetails(ProductListDto productModel) {
-
-		ProductModel dto = new ProductModel();
-		CommonResponse responseMessage = new CommonResponse();
-		dto.setProductCreatedDate(LocalDateTime.now());
-		dto.setProductCurrentStockPackageCount(productModel.getProductCurrentStockPackageCount());
-		dto.setProductEffectiveDate(productModel.getProductEffectiveDate());
-		dto.setProductLastEffectiveDate(productModel.getProductLastEffectiveDate());
-		dto.setProductName(productModel.getProductName());
-		dto.setProductPackageType(productModel.getProductPackageType());
-		dto.setProductPackQuantity(productModel.getProductPackQuantity());
-		dto.setProductPackageUnitOfMeasure(productModel.getProductPackageUnitOfMeasure());
-		dto.setProductPrice(productModel.getProductPrice());
-	    SuperMarketCode status = superMarketCodeDao.findByDescription(productModel.getProductStatus());
-	    dto.setProductStatus(status);
-
-		productDao.saveProduct(dto);
-
-		responseMessage.setStatus(WebServiceUtil.SUCCESS_STATUS);
-		responseMessage.setMessage(WebServiceUtil.NEW_PRODUCT_ADDED);
-		return responseMessage;
-	}
+//	@Override
+//	public Object addProductDetails(ProductListDto productModel) {
+//
+//		ProductModel dto = new ProductModel();
+//		CommonResponse responseMessage = new CommonResponse();
+//		dto.setProductCreatedDate(LocalDateTime.now());
+//		dto.setProductCurrentStockPackageCount(productModel.getProductCurrentStockPackageCount());
+//		dto.setProductEffectiveDate(productModel.getProductEffectiveDate());
+//		dto.setProductLastEffectiveDate(productModel.getProductLastEffectiveDate());
+//		dto.setProductName(productModel.getProductName());
+//		dto.setProductPackageType(productModel.getProductPackageType());
+//		dto.setProductPackQuantity(productModel.getProductPackQuantity());
+//		dto.setProductPackageUnitOfMeasure(productModel.getProductPackageUnitOfMeasure());
+//		dto.setProductPrice(productModel.getProductPrice());
+//	    SuperMarketCode status = superMarketCodeDao.findByDescription(productModel.getProductStatus());
+//	    dto.setProductStatus(status);
+//
+//		productDao.saveProduct(dto);
+//
+//		responseMessage.setStatus(WebServiceUtil.SUCCESS_STATUS);
+//		responseMessage.setMessage(WebServiceUtil.NEW_PRODUCT_ADDED);
+//		return responseMessage;
+//	}
 
 	@Override
 	public Object deleteProductById(Long id) {
@@ -143,18 +145,12 @@ public class ProductServiceImp implements ProductService {
 
 	    while (currentId != null) {
 	        ProductModel product = productDao.findByProductId(currentId);
-
-	        if (product == null) {
-	            
-	        }
-
 	        result.add(new ProductPriceHistoryDto(
 	                product.getProductId(),
 	                product.getProductName(),
 	                product.getProductPrice(),
 	                product.getProductEffectiveDate()
 	        ));
-
 	        currentId = product.getOldProductId();
 	    }
 	    CommonResponse response = new CommonResponse();

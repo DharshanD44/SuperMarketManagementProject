@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.supermarketmanagement.api.Model.Custom.ApiResponse;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductFilterRequest;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductListDto;
 import com.supermarketmanagement.api.Model.Entity.ProductModel;
@@ -41,11 +40,11 @@ public class ProductRestController {
         return ResponseEntity.ok(productService.updateProduct(updatedProduct));
     }
 	
-	@PostMapping("/add")
-	public ResponseEntity<?> addSingleProduct(@RequestBody ProductListDto productModel){
-		
-		return ResponseEntity.ok(productService.addProductDetails(productModel));
-	}
+//	@PostMapping("/add")
+//	public ResponseEntity<?> addSingleProduct(@RequestBody ProductListDto productModel){
+//		
+//		return ResponseEntity.ok(productService.addProductDetails(productModel));
+//	}
 	
 	@PostMapping("/delete/id/{id}")
 	public ResponseEntity<?> deleteProductById(@PathVariable Long id){

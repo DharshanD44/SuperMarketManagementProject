@@ -6,11 +6,11 @@ import org.springframework.stereotype.Repository;
 import com.supermarketmanagement.api.Model.Entity.SuperMarketCode;
 
 @Repository
-public interface SuperMarketCodeRepoistory extends JpaRepository<SuperMarketCode, Long>{
+public interface SuperMarketCodeRepoistory extends JpaRepository<SuperMarketCode, String>{
 
-	SuperMarketCode findByCode(String customerGender);
+	SuperMarketCode findByCode(String code);
 
-	SuperMarketCode findByDescription(String status);
+	SuperMarketCode findByDescription(String description);
 	
 
 }

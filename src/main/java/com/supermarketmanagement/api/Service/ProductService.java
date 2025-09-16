@@ -1,8 +1,6 @@
 package com.supermarketmanagement.api.Service;
 
 import java.util.Map;
-
-import com.supermarketmanagement.api.Model.Custom.ApiResponse;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductFilterRequest;
 import com.supermarketmanagement.api.Model.Custom.Product.ProductListDto;
 import com.supermarketmanagement.api.Model.Entity.ProductModel;
@@ -13,7 +11,7 @@ public interface ProductService {
 
 	Object getProductDetailsById(int id);
 
-	Object addProductDetails(ProductListDto productModel);
+//	Object addProductDetails(ProductListDto productModel);
 
 	Object deleteProductById(Long id);
 

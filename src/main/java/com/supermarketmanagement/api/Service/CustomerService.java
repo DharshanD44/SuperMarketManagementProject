@@ -1,6 +1,5 @@
 package com.supermarketmanagement.api.Service;
 
-import com.supermarketmanagement.api.Model.Custom.ApiResponse;
 import com.supermarketmanagement.api.Model.Custom.CommonListRequestModel;
 import com.supermarketmanagement.api.Model.Custom.CommonResponse;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;

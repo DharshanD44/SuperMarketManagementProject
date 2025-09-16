@@ -88,11 +88,12 @@ public class ProductDaoImp implements ProductDao {
 	    }
 
 	    if (request.getSearchBy() != null && request.getSearchValue() != null) {
-	        String value = "%" + request.getSearchValue().toLowerCase() + "%";
+	        String value = request.getSearchValue().toLowerCase();
 	        switch (request.getSearchBy().toLowerCase()) {
 	            case "productname":
-	                predicates.add(cb.like(cb.lower(root.get("productName")), value));
-	                break;
+	            	predicates.add(cb.like(cb.concat(" ", cb.concat(cb.lower(root.get("productName")), " ")),
+							"% " + value + " %"));	                
+	            	break;
 	            case "productprice":
 	                predicates.add(cb.equal(root.get("productPrice"), Double.valueOf(request.getSearchValue())));
 	                break;
@@ -120,13 +121,14 @@ public class ProductDaoImp implements ProductDao {
 	            root.get("productStatus").get("description")
 	    )).where(cb.and(predicates.toArray(new Predicate[predicates.size()])));
 
-	    TypedQuery<ProductListDto> query = entityManager.createQuery(cq);
+	    TypedQuery<ProductListDto> queryresult = entityManager.createQuery(cq);
+	    List<ProductListDto> results = queryresult.getResultList();
 
 	    if (request.getStart() != null) {
-	        query.setFirstResult(request.getStart());
+	    	queryresult.setFirstResult(request.getStart());
 	    }
 	    if (request.getLength() != null) {
-	        query.setMaxResults(request.getLength());
+	    	queryresult.setMaxResults(request.getLength());
 	    }
 
 	    CriteriaQuery<Long> totalCountQuery = cb.createQuery(Long.class);
@@ -140,12 +142,19 @@ public class ProductDaoImp implements ProductDao {
 	    Long filteredCount = entityManager.createQuery(filteredCountQuery).getSingleResult();
 
 	    Map<String, Object> response = new LinkedHashMap<>();
-	    response.put("status", WebServiceUtil.SUCCESS_STATUS);
-	    response.put("data", query.getResultList());
-	    response.put("totalCount", totalCount);
-	    response.put("filteredCount", filteredCount);
 
-	    return response;
+		if (results == null || results.isEmpty()) {
+			response.put("status", WebServiceUtil.FAILED_STATUS);
+			response.put("data", "NO DATA FOUND");
+			response.put("totalCount", 0);
+			response.put("filteredCount", 0);
+		} else {
+			response.put("status", WebServiceUtil.SUCCESS_STATUS);
+			response.put("totalCount", totalCount);
+			response.put("filteredCount", filteredCount);
+			response.put("data", results);	
+		}
+		return response;
 	}
 
 

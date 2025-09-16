@@ -47,7 +47,7 @@ public class ProductModel {
 	@Column(name = "product_last_effective_date")
 	private LocalDate productLastEffectiveDate;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
 	@JoinColumn(name = "product_status", referencedColumnName = "CODE")
 	private SuperMarketCode productStatus;
 

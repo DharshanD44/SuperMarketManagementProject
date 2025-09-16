@@ -1,9 +1,13 @@
 package com.supermarketmanagement.api.ServiceImp;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.supermarketmanagement.api.Model.Custom.CommonResponse;
 import com.supermarketmanagement.api.Model.Custom.Product.SalesProductListDto;
 import com.supermarketmanagement.api.Service.SalesService;
 import com.supermarketmanagement.api.dao.SalesDao;
@@ -15,8 +19,8 @@ public class SalesServiceImp implements SalesService{
 	private SalesDao salesDao;
 	
 	@Override
-	public List<SalesProductListDto> findTopSellingProducts(String filter) {
-		return salesDao.findTopSellingProducts(filter);
+	public Map<String, Object> findTopSellingProducts(String filter,LocalDateTime startDate, LocalDateTime endDate) {
+		return salesDao.findTopSellingProducts(filter,startDate,endDate);
 	}
 
 }
