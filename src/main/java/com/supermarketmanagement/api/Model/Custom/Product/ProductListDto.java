@@ -1,12 +1,13 @@
 package com.supermarketmanagement.api.Model.Custom.Product;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-import com.supermarketmanagement.api.Model.Entity.SuperMarketCode;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.supermarketmanagement.api.Util.LocalDateRequestDeserializer;
 
 public class ProductListDto {
 
+	private Integer sno;
 	private Long productId;
 	private String productName;
 	private String productPackageType;
@@ -14,7 +15,13 @@ public class ProductListDto {
 	private String productPackageUnitOfMeasure;
 	private Double productPrice;
 	private Integer productCurrentStockPackageCount;
+	
+	@JsonDeserialize(using = LocalDateRequestDeserializer.class) 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy") 
 	private LocalDate productEffectiveDate;
+    
+	@JsonDeserialize(using = LocalDateRequestDeserializer.class) 
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy")
 	private LocalDate productLastEffectiveDate;
 	private String productStatus;
 
@@ -34,6 +41,15 @@ public class ProductListDto {
 		this.productEffectiveDate = productEffectiveDate;
 		this.productLastEffectiveDate = productLastEffectiveDate;
 		this.productStatus = productStatus;
+	}
+
+	
+	public Integer getSno() {
+		return sno;
+	}
+
+	public void setSno(Integer sno) {
+		this.sno = sno;
 	}
 
 	public String getProductStatus() {

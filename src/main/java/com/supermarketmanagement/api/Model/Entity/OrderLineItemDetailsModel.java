@@ -1,13 +1,8 @@
 package com.supermarketmanagement.api.Model.Entity;
 
 import java.time.LocalDateTime;
-
-import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderStatusDto;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -40,7 +35,7 @@ public class OrderLineItemDetailsModel {
     @Column(name = "order_quantity_in_package", nullable = false)
     private Integer orderQuantityInPackage;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_status",referencedColumnName = "CODE",nullable = false)
 	private SuperMarketCode orderStatus;
 	

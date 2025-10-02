@@ -3,6 +3,10 @@ package com.supermarketmanagement.api.Model.Custom.Product;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.supermarketmanagement.api.Util.LocalDateRequestDeserializer;
+
 public class ProductPriceHistoryDto {
 
 	private Long productId;
@@ -11,6 +15,8 @@ public class ProductPriceHistoryDto {
 	
 	private Double productPrice;
 	
+	@JsonDeserialize(using = LocalDateRequestDeserializer.class) 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy") 
 	private LocalDate productEffectiveDate;
 
 	public Long getProductId() {

@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.supermarketmanagement.api.Model.Custom.CommonResponse;
+import com.supermarketmanagement.api.Model.Custom.CommonMessageResponse;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderLineItemsDto;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderRequestDto;
 import com.supermarketmanagement.api.Model.Custom.OrderLineItemDetails.UpdateOrderLineItemsDto;
@@ -20,12 +20,17 @@ import com.supermarketmanagement.api.dao.CustomerDao;
 import com.supermarketmanagement.api.dao.OrderDetailsDao;
 import com.supermarketmanagement.api.dao.OrderLineDetailsDao;
 import com.supermarketmanagement.api.dao.ProductDao;
+import com.supermarketmanagement.api.dao.SuperMarketCodeDao;
 
 import jakarta.transaction.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 @Transactional
 public class OrderServiceImp implements OrderService {
+
+	private static final Logger logger = LoggerFactory.getLogger(OrderDetailsServiceImp.class);
 
 	@Autowired
 	private OrderDetailsDao orderdetailsDao;
@@ -38,12 +43,37 @@ public class OrderServiceImp implements OrderService {
 
 	@Autowired
 	private ProductDao productDao;
+	
+	@Autowired
+	private SuperMarketCodeDao superMarketCodeDao;
+
+	@Autowired
+	private EmailService emailService;
+
+	/**
+	 * Places a new order for a customer.
+	 *
+	 * {@link CustomerDao#findByCustomerId(Long)}
+	 * {@link ProductDao#findByProductId(Long)}
+	 * {@link OrderDetailsDao#saveOrderDetails(OrderDetailsModel)}
+	 *
+	 * @param requestDto order request details including items
+	 * @return {@link CommonMessageResponse} with success/failure and message
+	 */
 
 	@Override
 	public Object placeOrder(OrderRequestDto requestDto) {
 
+		logger.info("placeOrder: Placing a new order for customer ID {}", requestDto.getCustomerId());
+
 		CustomerModel customerId = customerDao.findByCustomerId(requestDto.getCustomerId());
-		CommonResponse response = new CommonResponse();
+		CommonMessageResponse response = new CommonMessageResponse();
+
+		if(customerId==null) {
+			response.setStatus(WebServiceUtil.FAILED_STATUS);
+			response.setData(WebServiceUtil.CUSTOMER_NOT_FOUND);
+			return response;
+		}
 		float totalPrice = 0;
 		OrderDetailsModel orderDetailsDao = new OrderDetailsModel();
 		orderDetailsDao.setCustomer(customerId);
@@ -58,6 +88,11 @@ public class OrderServiceImp implements OrderService {
 			float individualPrice = 0;
 
 			ProductModel productModel = productDao.findByProductId(itemsDto.getProductId());
+			if(productModel==null) {
+				response.setStatus(WebServiceUtil.FAILED_STATUS);
+				response.setData(WebServiceUtil.PRODUCT_ID_NOT_FOUND);
+				return response;
+			}
 			Integer packageSize = productModel.getProductPackQuantity();
 
 			Integer requestUnits = itemsDto.getOrderQuantityIndividualUnit();
@@ -79,30 +114,60 @@ public class OrderServiceImp implements OrderService {
 				itemDetailsModel1.setOrderQuantityInPackage(requiredPackage);
 				itemDetailsModel1.setOrderQuantityIndividualUnit(adjustedUnits);
 				orderDetailsDao.getLineItemDetailsModels().add(itemDetailsModel1);
-				productModel.setProductCurrentStockPackageCount(
-						productModel.getProductCurrentStockPackageCount() - requiredPackage);
+
+				int updatedStock = productModel.getProductCurrentStockPackageCount() - requiredPackage;
+			    productModel.setProductCurrentStockPackageCount(updatedStock);
+
+			    if (updatedStock == 0) {
+			        SuperMarketCode inactiveCode = superMarketCodeDao.findByCode(WebServiceUtil.STATUS_INACTIVE);
+
+			        productModel.setProductLastEffectiveDate(LocalDate.now());
+			        productModel.setProductStatus(inactiveCode);
+
+			        List<String> productDetails = List.of(
+			            "ID: " + productModel.getProductId()
+			                + " | Name: " + productModel.getProductName()
+			                + " | PackQuantity: " + productModel.getProductPackQuantity()
+			                + " | Price: " + productModel.getProductPrice()
+			        );
+
+			        emailService.sendOutOfStockAlert(productDetails);
+			    }
+				
 			} else {
 				response.setStatus(WebServiceUtil.FAILED_STATUS);
-				response.setMessage(WebServiceUtil.ORDER_QUANTITY_OUT_OF_STOCK + " " + productModel.getProductName());
+				response.setData(WebServiceUtil.ORDER_QUANTITY_OUT_OF_STOCK + " " + productModel.getProductName());
 				return response;
 			}
 		}
 		orderDetailsDao.setTotalprice(totalPrice);
 		response.setStatus(WebServiceUtil.SUCCESS_STATUS);
-		response.setMessage(WebServiceUtil.ORDER_PLACED);
+		response.setData(WebServiceUtil.ORDER_PLACED);
 		orderdetailsDao.saveOrderDetails(orderDetailsDao);
 		return response;
 	}
 
+	/**
+	 * Updates an already placed order line item.
+	 *
+	 * {@link OrderLineDetailsDao#findByOrderLineId(Long)}
+	 * {@link OrderDetailsDao#findByOrderId(Long)}
+	 * {@link ProductDao#findByProductId(Long)}
+	 *
+	 * @param updaterequestDto update request containing order line details
+	 * @return {@link CommonMessageResponse} with success/failure and message
+	 */
 	@Override
 	public Object updatePlacedOrder(UpdateOrderLineItemsDto updaterequestDto) {
-		CommonResponse response = new CommonResponse();
+
+		logger.info("updatePlacedOrder: Updating order line item ID {}", updaterequestDto.getOrderLineId());
+		CommonMessageResponse response = new CommonMessageResponse();
 
 		OrderLineItemDetailsModel lineItem = orderLineDetailsDao.findByOrderLineId(updaterequestDto.getOrderLineId());
 
 		if (lineItem == null) {
 			response.setStatus(WebServiceUtil.FAILED_STATUS);
-			response.setMessage(WebServiceUtil.ORDER_LINE_ID_NOT_FOUND);
+			response.setData(WebServiceUtil.ORDER_LINE_ID_NOT_FOUND);
 			return response;
 		}
 
@@ -113,9 +178,9 @@ public class OrderServiceImp implements OrderService {
 		float totalPrice = orderDetailsModel.getTotalprice();
 
 		if (WebServiceUtil.PACKED_STATUS.equals(lineItem.getOrderStatus().getCode())) {
-		    response.setStatus(WebServiceUtil.FAILED_STATUS);
-		    response.setMessage(lineItem.getProduct().getProductName() + " " + WebServiceUtil.CANT_UPDATE_ORDER);
-		    return response;
+			response.setStatus(WebServiceUtil.FAILED_STATUS);
+			response.setData(lineItem.getProduct().getProductName() + " " + WebServiceUtil.CANT_UPDATE_ORDER);
+			return response;
 		}
 
 		float individualPrice = 0;
@@ -142,10 +207,10 @@ public class OrderServiceImp implements OrderService {
 		lineItem.setPrice(individualPrice);
 		orderDetailsModel.setTotalprice(beforePrice);
 		productModel.setProductCurrentStockPackageCount(
-		productModel.getProductCurrentStockPackageCount() - requiredPackage);
+				productModel.getProductCurrentStockPackageCount() - requiredPackage);
 		orderDetailsModel.setUpdateDate(LocalDateTime.now());
 		response.setStatus(WebServiceUtil.SUCCESS_STATUS);
-		response.setMessage(WebServiceUtil.UPDATE_PLACED_ORDER);
+		response.setData(WebServiceUtil.UPDATE_PLACED_ORDER);
 		return response;
 	}
 

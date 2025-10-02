@@ -3,15 +3,92 @@ package com.supermarketmanagement.api.Model.Custom.OrderDetails;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 public class OrderDetailsListDto {
 
+	private Integer sno;
 	private Long orderId;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy HH:mm:ss")
 	private LocalDateTime orderedDate;
+
 	private Long customerId;
+
+	private String customerFirstName;
+
+	private String customerMiddleName;
+
+	private String customerLastName;
+
+	private Long customerMobileno;
+
+	private String customerEmail;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy")
 	private LocalDate orderExpectedDate;
+
 	private String orderStatus;
-	private LocalDateTime updateDate;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy HH:mm:ss")
+	private LocalDateTime updatedDate;
 	private float totalPrice;
+
+	public String getCustomerFirstName() {
+		return customerFirstName;
+	}
+
+	public void setCustomerFirstName(String customerFirstName) {
+		this.customerFirstName = customerFirstName;
+	}
+
+	public String getCustomerMiddleName() {
+		return customerMiddleName;
+	}
+
+	public void setCustomerMiddleName(String customerMiddleName) {
+		this.customerMiddleName = customerMiddleName;
+	}
+
+	public String getCustomerLastName() {
+		return customerLastName;
+	}
+
+	public void setCustomerLastName(String customerLastName) {
+		this.customerLastName = customerLastName;
+	}
+
+	public Long getCustomerMobileno() {
+		return customerMobileno;
+	}
+
+	public void setCustomerMobileno(Long customerMobileno) {
+		this.customerMobileno = customerMobileno;
+	}
+
+	public String getCustomerEmail() {
+		return customerEmail;
+	}
+
+	public void setCustomerEmail(String customerEmail) {
+		this.customerEmail = customerEmail;
+	}
+
+	public Integer getSno() {
+		return sno;
+	}
+
+	public void setSno(Integer sno) {
+		this.sno = sno;
+	}
+
+	public LocalDateTime getOrderedDate() {
+		return orderedDate;
+	}
+
+	public void setOrderedDate(LocalDateTime orderedDate) {
+		this.orderedDate = orderedDate;
+	}
 
 	public Long getOrderId() {
 		return orderId;
@@ -27,14 +104,6 @@ public class OrderDetailsListDto {
 
 	public void setOrderStatus(String orderStatus) {
 		this.orderStatus = orderStatus;
-	}
-
-	public LocalDateTime getOrderDate() {
-		return orderedDate;
-	}
-
-	public void setOrderDate(LocalDateTime orderDate) {
-		this.orderedDate = orderDate;
 	}
 
 	public Long getCustomerId() {
@@ -61,25 +130,30 @@ public class OrderDetailsListDto {
 		this.totalPrice = totalPrice;
 	}
 
-	
-	public LocalDateTime getUpdateDate() {
-		return updateDate;
+	public LocalDateTime getUpdatedDate() {
+		return updatedDate;
 	}
 
-	public void setUpdateDate(LocalDateTime updateDate) {
-		this.updateDate = updateDate;
+	public void setUpdatedDate(LocalDateTime updatedDate) {
+		this.updatedDate = updatedDate;
 	}
 
 	public OrderDetailsListDto() {
 	}
 
-	public OrderDetailsListDto(long orderId, LocalDateTime orderedDate, long customerId, LocalDate orderExpectedDate,
-			LocalDateTime updateDate,String orderStatus, float totalPrice) {
+	public OrderDetailsListDto(long orderId, LocalDateTime orderedDate, long customerId, String customerFirstName,
+			String customerMiddleName, String customerLastName, long customerMobileno, String customerEmail,
+			LocalDate orderExpectedDate, LocalDateTime updatedDate, String orderStatus, float totalPrice) {
 		this.orderId = orderId;
 		this.orderedDate = orderedDate;
 		this.customerId = customerId;
+		this.customerFirstName = customerFirstName;
+		this.customerMiddleName = customerMiddleName;
+		this.customerLastName = customerLastName;
+		this.customerMobileno = customerMobileno;
+		this.customerEmail = customerEmail;
 		this.orderExpectedDate = orderExpectedDate;
-		this.updateDate=updateDate;
+		this.updatedDate = updatedDate;
 		this.orderStatus = orderStatus;
 		this.totalPrice = totalPrice;
 	}

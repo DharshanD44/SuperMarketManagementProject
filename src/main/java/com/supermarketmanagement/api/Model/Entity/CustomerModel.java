@@ -2,6 +2,7 @@ package com.supermarketmanagement.api.Model.Entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -9,28 +10,28 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
 
 @Entity
 @Table(name = "customer_master")
 public class CustomerModel {
-
+	
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY) 
     @Column(name = "customer_id")
     private Long customerId;
 
-    @Column(name = "customer_name")
-    private String customerName;
+    @Column(name = "customer_firstname")
+    private String customerFirstName;
+    
+    @Column(name = "customer_middlename")
+    private String customerMiddleName;
+    
+    @Column(name = "customer_lastname")
+    private String customerLastName;
 
     @OneToOne
     @JoinColumn(name = "customer_gender",referencedColumnName = "CODE", nullable = false)
@@ -66,8 +67,20 @@ public class CustomerModel {
     
 	@OneToMany
     private List<OrderDetailsModel> detailsModels;
+	
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "customer_status", referencedColumnName = "CODE")
+	private SuperMarketCode customerStatus;
     
-    public LocalDateTime getCustomerUpdatedDate() {
+    public SuperMarketCode getCustomerStatus() {
+		return customerStatus;
+	}
+
+	public void setCustomerStatus(SuperMarketCode customerStatus) {
+		this.customerStatus = customerStatus;
+	}
+
+	public LocalDateTime getCustomerUpdatedDate() {
 		return customerUpdatedDate;
 	}
 
@@ -75,7 +88,10 @@ public class CustomerModel {
 		this.customerUpdatedDate = customerUpdatedDate;
 	}
 
-    public CustomerModel() {}
+    public CustomerModel() {
+    	this.customerStatus = new SuperMarketCode();
+    	this.customerStatus.setCode("ACTIVE");
+    }
 
     public Long getCustomerId() {
         return customerId;
@@ -101,15 +117,31 @@ public class CustomerModel {
 		this.detailsModels = detailsModels;
 	}
 
-	public String getCustomerName() {
-        return customerName;
-    }
+    public String getCustomerFirstName() {
+		return customerFirstName;
+	}
 
-    public void setCustomerName(String customerName) {
-        this.customerName = customerName;
-    }
+	public void setCustomerFirstName(String customerFirstName) {
+		this.customerFirstName = customerFirstName;
+	}
 
-    public Long getCustomerMobileno() {
+	public String getCustomerMiddleName() {
+		return customerMiddleName;
+	}
+
+	public void setCustomerMiddleName(String customerMiddleName) {
+		this.customerMiddleName = customerMiddleName;
+	}
+
+	public String getCustomerLastName() {
+		return customerLastName;
+	}
+
+	public void setCustomerLastName(String customerLastName) {
+		this.customerLastName = customerLastName;
+	}
+
+	public Long getCustomerMobileno() {
         return customerMobileno;
     }
 

@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+
+import com.supermarketmanagement.api.Model.Custom.CommonMessageResponse;
 import com.supermarketmanagement.api.Model.Custom.Users.UsersDetailsDto;
 import com.supermarketmanagement.api.Model.Entity.UserModel;
 import com.supermarketmanagement.api.Repository.UserDetailsRepository;
@@ -47,10 +49,10 @@ public class UserDaoImp implements UserDao{
 		criteriaQuery.multiselect(
 		        root.get("userId"),
 		        root.get("username"),
-		        root.get("password")
-		);
-		List<UsersDetailsDto> results = entityManager.createQuery(criteriaQuery).getResultList();
-		return results;
+		        root.get("password"),
+		        root.get("userRole")
+		).where(builder.equal(root.get("isDeleted"), false));
+		return entityManager.createQuery(criteriaQuery).getResultList();
 	}
 
 }

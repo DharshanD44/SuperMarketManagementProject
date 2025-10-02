@@ -5,8 +5,12 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.supermarketmanagement.api.Model.Entity.ProductModel;
+import com.supermarketmanagement.api.Model.Entity.SuperMarketCode;
 import com.supermarketmanagement.api.Repository.ProductRepository;
+import com.supermarketmanagement.api.Util.WebServiceUtil;
+import com.supermarketmanagement.api.dao.SuperMarketCodeDao;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,8 +22,9 @@ public class StockSchedulerService {
 
     @Autowired
     private EmailService emailService;
+    
 
-    @Scheduled(cron = "0 0 10 * * *")
+    @Scheduled(cron = "*/10 * 10 * * *")
     public void checkStockQuantity() {
         List<ProductModel> outOfStockProducts = productRepository.findByProductCurrentStockPackageCount(0);
 
@@ -30,10 +35,10 @@ public class StockSchedulerService {
 	                            + " | PackQuantity: " + p.getProductPackQuantity()
 	                            + " | Price: " + p.getProductPrice())
 	                    .collect(Collectors.toList());
-	
+
 	            System.out.println("⚠ Products OUT OF STOCK: " + productDetails);
 	
-	            emailService.sendOutOfStockAlert(productDetails, "dharshangk333@gmail.com");
+	            emailService.sendOutOfStockAlert(productDetails);
 	        }
     }
 }

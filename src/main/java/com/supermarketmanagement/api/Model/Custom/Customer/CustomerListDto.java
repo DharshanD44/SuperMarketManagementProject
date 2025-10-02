@@ -1,17 +1,12 @@
 package com.supermarketmanagement.api.Model.Custom.Customer;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
-import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-
 public class CustomerListDto {
 
+	private Integer sno;
 	private Long customerId;
-	private String customerName;
+	private String customerFirstName;
+	private String customerMiddleName;
+	private String customerLastName;
 	private String customerGender;
 	private Long customerMobileno;
 	private String customerAddress;
@@ -19,7 +14,23 @@ public class CustomerListDto {
 	private String customerCity;
 	private String customerPincode;
 	private String customerEmail;
+	private String customerStatus;
 
+	public Integer getSno() {
+		return sno;
+	}
+
+	public void setSno(Integer sno) {
+		this.sno = sno;
+	}
+
+	public String getCustomerStatus() {
+		return customerStatus;
+	}
+
+	public void setCustomerStatus(String customerStatus) {
+		this.customerStatus = customerStatus;
+	}
 
 	public String getCustomerGender() {
 		return customerGender;
@@ -37,12 +48,28 @@ public class CustomerListDto {
 		this.customerId = customerId;
 	}
 
-	public String getCustomerName() {
-		return customerName;
+	public String getCustomerFirstName() {
+		return customerFirstName;
 	}
 
-	public void setCustomerName(String customerName) {
-		this.customerName = customerName;
+	public void setCustomerFirstName(String customerFirstName) {
+		this.customerFirstName = customerFirstName;
+	}
+
+	public String getCustomerMiddleName() {
+		return customerMiddleName;
+	}
+
+	public void setCustomerMiddleName(String customerMiddleName) {
+		this.customerMiddleName = customerMiddleName;
+	}
+
+	public String getCustomerLastName() {
+		return customerLastName;
+	}
+
+	public void setCustomerLastName(String customerLastName) {
+		this.customerLastName = customerLastName;
 	}
 
 	public Long getCustomerMobileno() {
@@ -93,17 +120,21 @@ public class CustomerListDto {
 		this.customerEmail = customerEmail;
 	}
 
-	public CustomerListDto(Long customerId, String customerName,String customerGender, Long customerMobileno, String customerAddress,
-			String customerLocation, String customerCity, String customerPincode, String customerEmail) {
+	public CustomerListDto(Long customerId, String customerFirstName,String customerMiddleName,String customerLastName,String customerGender, Long customerMobileno,
+			String customerAddress, String customerLocation, String customerCity, String customerPincode,
+			String customerEmail, String customerStatus) {
 		this.customerId = customerId;
-		this.customerName = customerName;
-		this.customerGender= customerGender;
+		this.customerFirstName = customerFirstName;
+		this.customerMiddleName = customerMiddleName;
+		this.customerLastName = customerLastName;
+		this.customerGender = customerGender;
 		this.customerMobileno = customerMobileno;
 		this.customerAddress = customerAddress;
 		this.customerLocation = customerLocation;
 		this.customerCity = customerCity;
 		this.customerPincode = customerPincode;
 		this.customerEmail = customerEmail;
+		this.customerStatus = customerStatus;
 	}
 
 	public CustomerListDto() {

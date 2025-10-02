@@ -1,6 +1,7 @@
 package com.supermarketmanagement.api.ServiceImp;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ public class EmailService {
 	@Autowired
 	private JavaMailSender mailSender;
 
-	public void sendOutOfStockAlert(List<String> productDetails, String adminEmail) {
+	public void sendOutOfStockAlert(List<String> productDetails) {
 		try {
 			MimeMessage message = mailSender.createMimeMessage();
 			MimeMessageHelper helper = new MimeMessageHelper(message, true);
@@ -48,5 +49,29 @@ public class EmailService {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	
+	public void sendPasswordResetEmail(String to, String token) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("dharshangk333@gmail.com");
+        message.setTo(to);
+        message.setSubject("Password Reset Request");
+        message.setText("Use the following token to reset your password:\n\n" + token +
+                        "\n\nThis token will expire in 15 minutes.");
+
+        mailSender.send(message);
+    }
+
+
+	public void sendOtpEmail(String username, String otp) {
+		   SimpleMailMessage message = new SimpleMailMessage();
+	        message.setFrom("dharshangk333@gmail.com");
+	        message.setTo(username);
+	        message.setSubject("Your OTP for Password Reset");
+	        message.setText("Your OTP for resetting your password is: " + otp +
+	                        "\n\nThis OTP is valid for 5 minutes only.");
+
+	        mailSender.send(message);		
 	}
 }

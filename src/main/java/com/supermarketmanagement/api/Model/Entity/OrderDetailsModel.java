@@ -5,6 +5,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderStatusDto;
 
 import jakarta.persistence.CascadeType;
@@ -41,7 +45,7 @@ public class OrderDetailsModel {
 	@Column(name = "order_expected_date")
 	private LocalDate orderExpectedDate;
 
-	@OneToOne
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_status", referencedColumnName = "CODE")
 	private SuperMarketCode orderStatus;
 

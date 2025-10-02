@@ -8,4 +8,6 @@ public interface SuperMarketCodeDao {
 
 	SuperMarketCode findByDescription(String code);
 
+	SuperMarketCode findByDescription(SuperMarketCode productStatus);
+
 }

@@ -1,14 +1,15 @@
-package com.supermarketmanagement.api.Model.Custom;
+package com.supermarketmanagement.api.Model.Custom.Customer;
 
-public class CommonListRequestModel {
+public class CustomerListRequest {
+	private Boolean isActive;
 	private Integer draw;
-	private Integer start = 0;
-	private Integer length = 10;
 	private String searchBy;
 	private String searchValue;
+	private Integer start = 0;
+	private Integer length = 10;
 	private String orderBy;
 	private String orderType;
-	
+
 	public String getOrderBy() {
 		return orderBy;
 	}
@@ -33,20 +34,12 @@ public class CommonListRequestModel {
 		this.draw = draw;
 	}
 
-	public Integer getStart() {
-		return start;
+	public Boolean getIsActive() {
+		return isActive;
 	}
 
-	public void setStart(Integer start) {
-		this.start = start;
-	}
-
-	public Integer getLength() {
-		return length;
-	}
-
-	public void setLength(Integer length) {
-		this.length = length;
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
 	public String getSearchBy() {
@@ -65,14 +58,20 @@ public class CommonListRequestModel {
 		this.searchValue = searchValue;
 	}
 
-	public CommonListRequestModel(Integer start, Integer length, String searchBy, String searchValue) {
-		this.start = start;
-		this.length = length;
-		this.searchBy = searchBy;
-		this.searchValue = searchValue;
+	public Integer getStart() {
+		return start;
 	}
 
-	public CommonListRequestModel() {
+	public void setStart(Integer start) {
+		this.start = start;
+	}
+
+	public Integer getLength() {
+		return length;
+	}
+
+	public void setLength(Integer length) {
+		this.length = length;
 	}
 
 }

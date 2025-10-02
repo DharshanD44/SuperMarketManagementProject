@@ -41,7 +41,7 @@ public class JpaConfiguration {
         emf.setJpaVendorAdapter(new HibernateJpaVendorAdapter());
 
         Properties jpaProps = new Properties();
-        jpaProps.setProperty("hibernate.hbm2ddl.auto", "update");
+        jpaProps.setProperty("hibernate.hbm2ddl.auto", "none");
         jpaProps.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL8Dialect");
         jpaProps.setProperty("hibernate.show_sql", "true");
 

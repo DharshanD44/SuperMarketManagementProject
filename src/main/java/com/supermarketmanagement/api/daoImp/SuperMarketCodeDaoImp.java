@@ -23,4 +23,9 @@ public class SuperMarketCodeDaoImp implements SuperMarketCodeDao{
 		return codeRepoistory.findByDescription(status);
 	}
 
+	@Override
+	public SuperMarketCode findByDescription(SuperMarketCode productStatus) {
+		return codeRepoistory.findByDescription(productStatus);
+	}
+
 }

@@ -1,18 +1,20 @@
 package com.supermarketmanagement.api.Service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.util.MultiValueMap;
 
+import com.supermarketmanagement.api.Model.Custom.CommonMessageResponse;
 import com.supermarketmanagement.api.Model.Custom.Users.AddUsersDto;
 import com.supermarketmanagement.api.Model.Custom.Users.UsersDetailsDto;
 
 public interface UserService {
 
-	Object addUsers(AddUsersDto userDetailsDto);
+	CommonMessageResponse addUsers(AddUsersDto userDetailsDto);
 
-	List<UsersDetailsDto> getAllUsersDetails();
+	Map<String, Object> getAllUsersDetails();
 
-	Object deleteUserById(Long id);
+	CommonMessageResponse deleteUserById(Long id);
 
 }

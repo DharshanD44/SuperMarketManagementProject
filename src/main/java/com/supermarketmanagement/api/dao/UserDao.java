@@ -2,6 +2,7 @@ package com.supermarketmanagement.api.dao;
 
 import java.util.List;
 
+import com.supermarketmanagement.api.Model.Custom.CommonMessageResponse;
 import com.supermarketmanagement.api.Model.Custom.Users.AddUsersDto;
 import com.supermarketmanagement.api.Model.Custom.Users.UsersDetailsDto;
 import com.supermarketmanagement.api.Model.Entity.UserModel;

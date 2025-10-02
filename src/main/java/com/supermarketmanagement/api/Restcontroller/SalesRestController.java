@@ -21,13 +21,22 @@ public class SalesRestController {
 	@Autowired
 	private SalesService salesService;
 
+	/**
+	 * Retrieves top selling products based on optional filters and date range.
+	 *
+	 * @param filter request param
+	 * @param startDate request param
+	 * @param endDate request param
+	 * @return ResponseEntity with list of top selled products.
+	 */
 	@GetMapping("/sales/top")
 	public ResponseEntity<?> getTopSellingProducts(
 			@RequestParam(required = false) String filter,
 	        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
 	        @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) 
-		{	
-        return ResponseEntity.ok(salesService.findTopSellingProducts(filter,startDate,endDate));       
+	{	
+        return ResponseEntity.ok(salesService.findTopSellingProducts(filter, startDate, endDate));       
     }
 
 }
+

@@ -11,6 +11,8 @@ public interface SuperMarketCodeRepoistory extends JpaRepository<SuperMarketCode
 	SuperMarketCode findByCode(String code);
 
 	SuperMarketCode findByDescription(String description);
+
+	SuperMarketCode findByDescription(SuperMarketCode productStatus);
 	
 
 }

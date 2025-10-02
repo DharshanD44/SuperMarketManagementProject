@@ -1,6 +1,5 @@
 package com.supermarketmanagement.api.daoImp;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -10,17 +9,21 @@ import org.springframework.stereotype.Repository;
 
 import com.supermarketmanagement.api.Model.Custom.CommonListRequestModel;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
+import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListRequest;
 import com.supermarketmanagement.api.Model.Entity.CustomerModel;
 import com.supermarketmanagement.api.Model.Entity.SuperMarketCode;
 import com.supermarketmanagement.api.Repository.CustomerRepoistory;
 import com.supermarketmanagement.api.Util.WebServiceUtil;
 import com.supermarketmanagement.api.dao.CustomerDao;
+import com.supermarketmanagement.api.dao.SuperMarketCodeDao;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
@@ -35,42 +38,96 @@ public class CustomerDaoImp implements CustomerDao {
 	@Autowired
 	CustomerRepoistory customerRepoistory;
 
+
 	@Override
-	public Map<String, Object> getCustomerDetails(CommonListRequestModel commonListRequestModel) {
+	public Map<String, Object> getCustomerDetails(CustomerListRequest commonListRequestModel) {
 		CriteriaBuilder criteriabuilder = entityManager.getCriteriaBuilder();
 
 		CriteriaQuery<CustomerListDto> criteriaQuery = criteriabuilder.createQuery(CustomerListDto.class);
 		Root<CustomerModel> root = criteriaQuery.from(CustomerModel.class);
-
+		
 		List<Predicate> predicates = new ArrayList<>();
+		Map<String, Object> response = new LinkedHashMap<>();
 
-		if (commonListRequestModel.getSearchBy() != null && commonListRequestModel.getSearchValue() != null) {
+		if (commonListRequestModel.getIsActive() != null) {
+
+			if (commonListRequestModel.getIsActive()) {
+				predicates.add(criteriabuilder.equal(root.get("customerStatus").get("code"), WebServiceUtil.STATUS_ACTIVE));
+			} else {
+				predicates.add(criteriabuilder.equal(root.get("customerStatus").get("code"), WebServiceUtil.STATUS_INACTIVE));
+			}
+		}
+
+		boolean searchColumn = false;
+		if (!commonListRequestModel.getSearchBy().isEmpty() && !commonListRequestModel.getSearchValue().isEmpty()) {
+
 			String value = commonListRequestModel.getSearchValue().toLowerCase();
 			switch (commonListRequestModel.getSearchBy().toLowerCase()) {
-			case "customername":
-				predicates.add(criteriabuilder.like(criteriabuilder.concat(" ", criteriabuilder.concat(criteriabuilder.lower(root.get("customerName")), " ")),
-						"% " + value + " %"));
+			case WebServiceUtil.CUSTOMER_NAME:
+				predicates
+						.add(criteriabuilder.like(criteriabuilder.lower(root.get("customerName")), "%" + value + "%"));
+
 				break;
-			case "mobilenumber":
-				predicates.add(
-						criteriabuilder.equal(root.get("customerMobileno"), Long.valueOf(commonListRequestModel.getSearchValue())));
+			case WebServiceUtil.CUSTOMER_MOBILE_NO:
+				predicates.add(criteriabuilder.equal(root.get("customerMobileno"),
+						Long.valueOf(commonListRequestModel.getSearchValue())));
+
 				break;
-			case "emailid":
-				predicates.add(criteriabuilder.equal(criteriabuilder.lower(root.get("customerEmail")),value));
+			case WebServiceUtil.CUSTOMER_EMAIL:
+				predicates.add(criteriabuilder.like(criteriabuilder.lower(root.get("customerEmail")),
+						value.toLowerCase() + "%"));
 				break;
 			default:
+				searchColumn = true;
 				break;
 			}
 		}
-		criteriaQuery
-				.multiselect(root.get("customerId"), root.get("customerName"),
-						root.get("customerGender").get("description"), root.get("customerMobileno"),
-						root.get("customerAddress"), root.get("customerLocation"), root.get("customerCity"),
-						root.get("customerPincode"), root.get("customerEmail"))
-				.where(criteriabuilder.and(predicates.toArray(new Predicate[predicates.size()])));
 
+		if (searchColumn) {
+			response.put("status", WebServiceUtil.FAILED_STATUS);
+			response.put("message", WebServiceUtil.INVALID_SEARCH_COLUMN);
+			return response;
+		}
+		if (!commonListRequestModel.getSearchBy().isEmpty() && commonListRequestModel.getSearchValue().isEmpty()) {
+			response.put("status", WebServiceUtil.WARNING_STATUS);
+			response.put("message", WebServiceUtil.SEARCH_VALUE_NULL);
+			return response;
+		}
+		predicates.add(criteriabuilder.isNull(root.get("customerLastEffectiveDate")));
+
+		criteriaQuery.multiselect(
+				root.get("customerId"), 
+				root.get("customerFirstName"),
+				root.get("customerMiddleName"),
+				root.get("customerLastName"),
+				root.get("customerGender").get("description"), 
+				root.get("customerMobileno"),
+				root.get("customerAddress"),
+				root.get("customerLocation"), 
+				root.get("customerCity"),
+				root.get("customerPincode"), 
+				root.get("customerEmail"), 
+				root.get("customerStatus").get("description"))
+				.where(criteriabuilder.and(predicates.toArray(new Predicate[0])));
+
+		if (!commonListRequestModel.getOrderBy().isEmpty() && !commonListRequestModel.getOrderType().isEmpty()) {
+			switch (commonListRequestModel.getOrderBy()) {
+			case WebServiceUtil.SORT_BY_SNO:
+				if (WebServiceUtil.SORT_ASECENDING.equalsIgnoreCase(commonListRequestModel.getOrderType())) 
+					criteriaQuery.orderBy(criteriabuilder.asc(root.get("customerId")));
+				else if((WebServiceUtil.SORT_DESCENDING.equalsIgnoreCase(commonListRequestModel.getOrderType())))
+					criteriaQuery.orderBy(criteriabuilder.desc(root.get("customerId")));
+				break;
+			default:
+				if (WebServiceUtil.SORT_ASECENDING.equalsIgnoreCase(commonListRequestModel.getOrderType()))
+					criteriaQuery.orderBy(criteriabuilder.asc(root.get(commonListRequestModel.getOrderBy())));
+				else
+					criteriaQuery.orderBy(criteriabuilder.desc(root.get(commonListRequestModel.getOrderBy())));
+				break;
+			}
+		}
+		
 		TypedQuery<CustomerListDto> queryresult = entityManager.createQuery(criteriaQuery);
-		List<CustomerListDto> result = queryresult.getResultList();
 
 		if (commonListRequestModel.getStart() != null) {
 			queryresult.setFirstResult(commonListRequestModel.getStart());
@@ -79,31 +136,40 @@ public class CustomerDaoImp implements CustomerDao {
 			queryresult.setMaxResults(commonListRequestModel.getLength());
 		}
 
+		
+		List<CustomerListDto> result = queryresult.getResultList();
+
 		CriteriaQuery<Long> totalQuery = criteriabuilder.createQuery(Long.class);
 		totalQuery.select(criteriabuilder.count(totalQuery.from(CustomerModel.class)));
 		Long totalCount = entityManager.createQuery(totalQuery).getSingleResult();
 
 		CriteriaQuery<Long> filterCountQuery = criteriabuilder.createQuery(Long.class);
 		Root<CustomerModel> filterRoot = filterCountQuery.from(CustomerModel.class);
-		filterCountQuery.select(criteriabuilder.count(filterRoot)).where(criteriabuilder.and(predicates.toArray(new Predicate[0])));
+		filterCountQuery.select(criteriabuilder.count(filterRoot))
+				.where(criteriabuilder.and(predicates.toArray(new Predicate[0])));
 		Long filteredCount = entityManager.createQuery(filterCountQuery).getSingleResult();
+		
+		int start = commonListRequestModel.getStart(); 
 
-		Map<String, Object> response = new LinkedHashMap<>();
+		if (WebServiceUtil.SORT_BY_SNO.equalsIgnoreCase(commonListRequestModel.getOrderBy())
+		        && WebServiceUtil.SORT_DESCENDING.equalsIgnoreCase(commonListRequestModel.getOrderType())) {
 
-		if (result == null || result.isEmpty()) {
-			response.put("status", WebServiceUtil.FAILED_STATUS);
-			response.put("totalCount", 0);
-			response.put("filteredCount", 0);
-			response.put("data", "NO DATA FOUND");
-			
+		    for (int i = 0; i < result.size(); i++) {
+		        result.get(i).setSno((int) (totalCount - (start + i)));
+		    }
+
 		} else {
-			response.put("status", WebServiceUtil.SUCCESS_STATUS);
-			response.put("data", result);
-			response.put("totalCount", totalCount);
-			response.put("filteredCount", filteredCount);
+		    for (int i = 0; i < result.size(); i++) {
+		        result.get(i).setSno(start + i + 1);
+		    }
 		}
-		return response;
 
+		response.put("status", WebServiceUtil.SUCCESS_STATUS);
+		response.put("totalCount", totalCount);
+		response.put("filterCount", filteredCount);
+		response.put("data", result);
+
+		return response;
 	}
 
 	@Override
@@ -117,28 +183,30 @@ public class CustomerDaoImp implements CustomerDao {
 	}
 
 	@Override
-	public CustomerListDto findCustomerDetailsById(Long id) {
-		CriteriaBuilder criteriabuilder = entityManager.getCriteriaBuilder();
-		CriteriaQuery<CustomerListDto> criteriaQuery = criteriabuilder.createQuery(CustomerListDto.class);
-
-		Root<CustomerModel> root = criteriaQuery.from(CustomerModel.class);
-		Predicate lastEffective = root.get("customerLastEffectiveDate").isNull();
-		Predicate customerid = criteriabuilder.equal(root.get("customerId"), id);
-
-		criteriaQuery
-				.multiselect(root.get("customerId"), root.get("customerName"), root.get("customerMobileno"),
-						root.get("customerAddress"), root.get("customerLocation"), root.get("customerCity"),
-						root.get("customerPincode"), root.get("customerEmail"))
-				.where(criteriabuilder.and(lastEffective, customerid));
-		try {
-			return entityManager.createQuery(criteriaQuery).getSingleResult();
-		} catch (NoResultException e) {
-			return null;
-		}
+	public SuperMarketCode find(Class<SuperMarketCode> class1, String string) {
+		return entityManager.find(SuperMarketCode.class, "NEW");
 	}
 
 	@Override
-	public SuperMarketCode find(Class<SuperMarketCode> class1, String string) {
-		return entityManager.find(SuperMarketCode.class, "NEW");
+	public CustomerListDto findCustomerDetailsById(Long customerid) {
+		CriteriaBuilder criteriabuilder = entityManager.getCriteriaBuilder();
+		CriteriaQuery<CustomerListDto> criteriaQuery = criteriabuilder.createQuery(CustomerListDto.class);
+		Root<CustomerModel> root = criteriaQuery.from(CustomerModel.class);
+
+		criteriaQuery.multiselect(
+				root.get("customerId"),
+				root.get("customerFirstName"),
+				root.get("customerMiddleName"),
+				root.get("customerLastName"),
+				root.get("customerGender").get("description"),
+				root.get("customerMobileno"),
+				root.get("customerAddress"),
+				root.get("customerLocation"), 
+				root.get("customerCity"),
+				root.get("customerPincode"), 
+				root.get("customerEmail"), 
+				root.get("customerStatus").get("description"))
+				.where(criteriabuilder.equal(root.get("customerId"), customerid));
+		return entityManager.createQuery(criteriaQuery).getResultStream().findFirst().orElse(null);
 	}
 }

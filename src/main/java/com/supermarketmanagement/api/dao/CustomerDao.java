@@ -4,6 +4,7 @@ import java.util.Map;
 
 import com.supermarketmanagement.api.Model.Custom.CommonListRequestModel;
 import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListDto;
+import com.supermarketmanagement.api.Model.Custom.Customer.CustomerListRequest;
 import com.supermarketmanagement.api.Model.Entity.CustomerModel;
 import com.supermarketmanagement.api.Model.Entity.SuperMarketCode;
 
@@ -13,9 +14,9 @@ public interface CustomerDao {
 
 	void saveCustomer(CustomerModel entity);
 
-	CustomerListDto findCustomerDetailsById(Long id);
-
-	Map<String, Object> getCustomerDetails(CommonListRequestModel commonListRequestModel);
+	Map<String, Object> getCustomerDetails(CustomerListRequest commonListRequestModel);
 
 	SuperMarketCode find(Class<SuperMarketCode> class1, String string);
+
+	CustomerListDto findCustomerDetailsById(Long customerid);
 }

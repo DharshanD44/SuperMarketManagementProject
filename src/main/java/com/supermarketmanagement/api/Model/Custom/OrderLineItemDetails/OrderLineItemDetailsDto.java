@@ -2,29 +2,84 @@ package com.supermarketmanagement.api.Model.Custom.OrderLineItemDetails;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.supermarketmanagement.api.Model.Custom.OrderDetails.OrderStatusDto;
 
 public class OrderLineItemDetailsDto {
 
+	private Integer sno;
 	private Long orderLineId;
 	private Long orderId;
 	private Long productId;
+	private String productName;
+	private Double productPrice;
 	private Integer orderQuantityIndividualUnit;
 	private Integer orderQuantityInPackage;
-	private String status;
-	private LocalDateTime updateDate;
-	private float price;
+	private String orderItemstatus;
 
-	public OrderLineItemDetailsDto(Long orderLineId, Long orderId, Long productId, Integer orderQuantityIndividualUnit,
-			Integer orderQuantityInPackage, String status, LocalDateTime updateDate, float price) {
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy HH:mm:ss")
+	private LocalDateTime orderedDate;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "MM-dd-yyyy HH:mm:ss")
+	private LocalDateTime updatedDate;
+	
+	private float orderItemPrice;
+
+	public OrderLineItemDetailsDto(Long orderLineId, Long orderId, Long productId, String productName,
+			Double productPrice, Integer orderQuantityIndividualUnit, Integer orderQuantityInPackage,
+			String orderItemstatus,LocalDateTime orderedDate, LocalDateTime updatedDate, float orderItemPrice) {
 		this.orderLineId = orderLineId;
 		this.orderId = orderId;
 		this.productId = productId;
+		this.productName = productName;
+		this.productPrice = productPrice;
 		this.orderQuantityIndividualUnit = orderQuantityIndividualUnit;
 		this.orderQuantityInPackage = orderQuantityInPackage;
-		this.status = status;
-		this.updateDate = updateDate;
-		this.price = price;
+		this.orderItemstatus = orderItemstatus;
+		this.orderedDate=orderedDate;
+		this.updatedDate = updatedDate;
+		this.orderItemPrice = orderItemPrice;
+	}
+
+	
+	public LocalDateTime getOrderedDate() {
+		return orderedDate;
+	}
+
+
+	public void setOrderedDate(LocalDateTime orderedDate) {
+		this.orderedDate = orderedDate;
+	}
+
+
+	public OrderLineItemDetailsDto(Long orderLineId,Long orderId, String orderItemstatus) {
+		this.orderLineId=orderLineId;
+		this.orderId = orderId;
+		this.orderItemstatus = orderItemstatus;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+
+	public Double getProductPrice() {
+		return productPrice;
+	}
+
+	public void setProductPrice(Double productPrice) {
+		this.productPrice = productPrice;
+	}
+
+	public Integer getSno() {
+		return sno;
+	}
+
+	public void setSno(Integer sno) {
+		this.sno = sno;
 	}
 
 	public Long getOrderLineId() {
@@ -67,28 +122,29 @@ public class OrderLineItemDetailsDto {
 		this.orderQuantityInPackage = orderQuantityInPackage;
 	}
 
-	public String getStatus() {
-		return status;
+	public String getOrderItemstatus() {
+		return orderItemstatus;
 	}
 
-	public void setStatus(String status) {
-		this.status = status;
+	public void setOrderItemstatus(String orderItemstatus) {
+		this.orderItemstatus = orderItemstatus;
 	}
 
-	public LocalDateTime getUpdateDate() {
-		return updateDate;
+	public LocalDateTime getUpdatedDate() {
+		return updatedDate;
 	}
 
-	public void setUpdateDate(LocalDateTime updateDate) {
-		this.updateDate = updateDate;
+	public void setUpdatedDate(LocalDateTime updatedDate) {
+		this.updatedDate = updatedDate;
 	}
 
-	public float getPrice() {
-		return price;
+	public float getOrderItemPrice() {
+		return orderItemPrice;
 	}
 
-	public void setPrice(float price) {
-		this.price = price;
+	public void setOrderItemPrice(float orderItemPrice) {
+		this.orderItemPrice = orderItemPrice;
 	}
+
 
 }

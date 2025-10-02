@@ -4,12 +4,28 @@ import java.time.LocalDateTime;
 
 public class AddUsersDto {
 
-    private Long userId;
-    private String username;
-    private String password;
-    private LocalDateTime createdDate;
-    private LocalDateTime updatedDate;
-    public String getPassword() {
+	private Long userId;
+	private String username;
+	private String password;
+	private String userRole;
+
+	public Long getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Long userId) {
+		this.userId = userId;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
+	}
+
+	public String getPassword() {
 		return password;
 	}
 
@@ -17,57 +33,22 @@ public class AddUsersDto {
 		this.password = password;
 	}
 
-	private boolean isDeleted;
+	public String getUserRole() {
+		return userRole;
+	}
 
-    public AddUsersDto() {
-    }
+	public void setUserRole(String userRole) {
+		this.userRole = userRole;
+	}
 
-    public AddUsersDto(String username, String password,LocalDateTime createdDate, LocalDateTime updatedDate, boolean isDeleted) {
-        this.username = username;
-        this.password = password;
-        this.createdDate = createdDate;
-        this.updatedDate = updatedDate;
-        this.isDeleted = isDeleted;
-    }
+	public AddUsersDto(Long userId, String username, String password, String userRole) {
+		super();
+		this.userId = userId;
+		this.username = username;
+		this.password = password;
+		this.userRole = userRole;
+	}
 
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public LocalDateTime getUpdatedDate() {
-        return updatedDate;
-    }
-
-    public void setUpdatedDate(LocalDateTime updatedDate) {
-        this.updatedDate = updatedDate;
-    }
-
-    public boolean isDeleted() {
-        return isDeleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        isDeleted = deleted;
-    }
+	public AddUsersDto() {
+	}
 }
-

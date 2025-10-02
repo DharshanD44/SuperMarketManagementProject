@@ -10,4 +10,8 @@ public interface SupplierDetailsRepository extends JpaRepository<SuppliersModel,
 
 	SuppliersModel findBySupplierId(Long supplierid);
 
+	SuppliersModel findBySupplierEmailId(String email);
+
+	SuppliersModel findBySupplierMobileNumber(Long mobileNumber);
+
 }

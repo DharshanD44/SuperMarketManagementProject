@@ -1,11 +1,16 @@
 package com.supermarketmanagement.api.Model.Entity;
 
 import java.time.LocalDateTime;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -24,7 +29,7 @@ public class SuppliersModel {
     private String supplierEmailId;
 
     @Column(name = "mobile_number", length = 15, unique = true)
-    private String supplierMobileNumber;
+    private Long supplierMobileNumber;
 
     @Column(name = "address", length = 255)
     private String address;
@@ -38,8 +43,9 @@ public class SuppliersModel {
     @Column(name = "country", length = 50)
     private String country;
 
-    @Column(name = "is_active")
-    private Boolean isActive = true;
+    @OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "is_active", referencedColumnName = "CODE")
+    private SuperMarketCode isActive;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate = LocalDateTime.now();
@@ -82,11 +88,11 @@ public class SuppliersModel {
 		this.supplierEmailId = supplierEmailId;
 	}
 
-	public String getSupplierMobileNumber() {
+	public Long getSupplierMobileNumber() {
 		return supplierMobileNumber;
 	}
 
-	public void setSupplierMobileNumber(String supplierMobileNumber) {
+	public void setSupplierMobileNumber(Long supplierMobileNumber) {
 		this.supplierMobileNumber = supplierMobileNumber;
 	}
 
@@ -122,11 +128,11 @@ public class SuppliersModel {
         this.country = country;
     }
 
-    public Boolean getIsActive() {
+    public SuperMarketCode getIsActive() {
         return isActive;
     }
 
-    public void setIsActive(Boolean active) {
+    public void setIsActive(SuperMarketCode active) {
         isActive = active;
     }
 

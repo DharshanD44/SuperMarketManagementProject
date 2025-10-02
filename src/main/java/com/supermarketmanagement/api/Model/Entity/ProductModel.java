@@ -47,7 +47,7 @@ public class ProductModel {
 	@Column(name = "product_last_effective_date")
 	private LocalDate productLastEffectiveDate;
 
-	@OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "product_status", referencedColumnName = "CODE")
 	private SuperMarketCode productStatus;
 
@@ -62,7 +62,7 @@ public class ProductModel {
 
 	@Column(name = "is_deleted")
 	private Boolean isDeleted = false;
-
+	
 	public Long getProductId() {
 		return productId;
 	}
@@ -177,7 +177,7 @@ public class ProductModel {
 
 	public ProductModel() {
 		this.productStatus = new SuperMarketCode();
-		this.productStatus.setCode("A");
+		this.productStatus.setCode("ACTIVE");
 	}
 
 }

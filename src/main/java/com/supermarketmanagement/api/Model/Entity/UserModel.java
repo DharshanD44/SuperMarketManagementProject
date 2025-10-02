@@ -33,7 +33,7 @@ public class UserModel {
 	@Column(name = "is_deleted")
 	private boolean isDeleted = false;
 	
-	@Column(name = "role")
+	@Column(name = "user_role")
 	private String userRole;
 
 	public String getUserRole() {
@@ -91,17 +91,4 @@ public class UserModel {
 	public void setDeleted(boolean isDeleted) {
 		this.isDeleted = isDeleted;
 	}
-
-	public UserModel(String username, String password, LocalDateTime createdDate, LocalDateTime updatedDate,
-			boolean isDeleted) {
-		this.username = username;
-		this.password = password;
-		this.createdDate = createdDate;
-		this.updatedDate = updatedDate;
-		this.isDeleted = isDeleted;
-	}
-
-	public UserModel() {
-	}
-
 }

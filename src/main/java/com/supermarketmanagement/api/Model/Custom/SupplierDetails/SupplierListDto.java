@@ -4,21 +4,22 @@ import java.time.LocalDateTime;
 
 public class SupplierListDto {
 	
+	private Integer sno;
     private Long supplierId;
     private String supplierName;
     private String email;
-    private String mobileNumber;
+    private Long mobileNumber;
     private String address;
     private String city;
     private String pincode;
     private String country;
-    private Boolean isActive;
+    private String isActive;
 
     public SupplierListDto() {
     }
 
-    public SupplierListDto(Long supplierId, String supplierName, String email, String mobileNumber, String address,
-                       String city, String pincode, String country, Boolean isActive) {
+    public SupplierListDto(Long supplierId, String supplierName, String email, Long mobileNumber, String address,
+                       String city, String pincode, String country, String isActive) {
         this.supplierId = supplierId;
         this.supplierName = supplierName;
         this.email = email;
@@ -29,6 +30,15 @@ public class SupplierListDto {
         this.country = country;
         this.isActive = isActive;
     }
+
+    
+	public Integer getSno() {
+		return sno;
+	}
+
+	public void setSno(Integer sno) {
+		this.sno = sno;
+	}
 
 	public Long getSupplierId() {
 		return supplierId;
@@ -54,11 +64,11 @@ public class SupplierListDto {
 		this.email = email;
 	}
 
-	public String getMobileNumber() {
+	public Long getMobileNumber() {
 		return mobileNumber;
 	}
 
-	public void setMobileNumber(String mobileNumber) {
+	public void setMobileNumber(Long mobileNumber) {
 		this.mobileNumber = mobileNumber;
 	}
 
@@ -94,11 +104,11 @@ public class SupplierListDto {
 		this.country = country;
 	}
 
-	public Boolean getIsActive() {
+	public String getIsActive() {
 		return isActive;
 	}
 
-	public void setIsActive(Boolean isActive) {
+	public void setIsActive(String isActive) {
 		this.isActive = isActive;
 	}		   
 }

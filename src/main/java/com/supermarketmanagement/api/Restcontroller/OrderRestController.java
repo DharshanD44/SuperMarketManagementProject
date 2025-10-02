@@ -20,16 +20,28 @@ public class OrderRestController {
 	@Autowired
 	private OrderService orderService;
 
+	/**
+	 * Places a new order.
+	 *
+	 * @param requestDto request body
+	 * @return ResponseEntity with success message after placing the order
+	 */
 	@PostMapping("/placeOrder")
 	public ResponseEntity<?> placeOrder(@RequestBody OrderRequestDto requestDto) {
 		return ResponseEntity.ok(orderService.placeOrder(requestDto));
 	}
 
+	/**
+	 * Updates an already placed order.
+	 *
+	 * @param updaterequestDto request body
+	 * @return ResponseEntity with success message after updation
+	 */
 	@PostMapping("/placedOrder/update")
 	public ResponseEntity<?> updatePlacedOrder(@RequestBody UpdateOrderLineItemsDto updaterequestDto) {
 		Object response = orderService.updatePlacedOrder(updaterequestDto);
-
 		return ResponseEntity.ok(response);
 	}
 
 }
+
